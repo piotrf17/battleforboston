@@ -1,17 +1,27 @@
 from django.conf.urls import patterns, include, url
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
+
+from mysite import views
+from tourny import views as tourny_views
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'mysite.views.home', name='home'),
-    # url(r'^mysite/', include('mysite.foo.urls')),
+    # Top level pages, publicly viewable.
+    # TODO(piotrf): find a better organization for these.
+    url(r'^$', views.index, name='index'),
+    url(r'^events$', views.events, name='events'),
+    url(r'^directions$', views.directions, name='directions'),
+    url(r'^contact$', views.contact, name='contact'),
+    url(r'^tabata$', views.tabata, name='tabata'),
+    url(r'^thanks$', views.thanks, name='thanks'),
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    # Tourny app - handles running a tournament.  Registration is also
+    # part of this app, but the registration page is publicy viewable,
+    # and linked directly off the top level url.
+    url(r'^register$', tourny_views.register, name='register'),
+    url(r'^tourny/', include('tourny.urls', namespace='tourny')),
 
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    # Admin app.
+    url(r'^admin/', include(admin.site.urls)),
 )
