@@ -8,6 +8,6 @@ You have registered for the following events:
 {% if person.team_kumite %}Team Kumite{% endif %}
 {% if person.boston_battle %}Boston Battle{% endif %}
 
-As a reminder, the tournament will be held on FILL ME IN at FILL ME IN.  You can find directions to the tournament at https://www.battleforboston.com/directions.
+As a reminder, the tournament will be held on FILL ME IN at FILL ME IN.  You can find directions to the tournament at https://battleforboston.com/directions.
 
 If you have any questions, please email the tournament director at director@battleforboston.com

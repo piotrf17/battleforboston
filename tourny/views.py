@@ -9,7 +9,7 @@ from django.template import Context
 from tourny.forms import PersonForm
 
 def send_registration_email(person):
-  email_template = get_template('registration_email.txt')
+  email_template = get_template('tourny/registration_email.txt')
   context = Context({'person': person})
   send_mail('Your Battle for Boston registration',
             email_template.render(context),
