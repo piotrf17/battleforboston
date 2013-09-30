@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block main %}
+<h1>Registration</h1>
+
+<h2>Overview</h2>
+      
+<p>The registration tables will open at 9am on Sunday April 22,
+  2012, and close at 11am. Boston Battle registration is allowed
+  up until 1pm.</p>
+      
+<p>The $50 registration fee covers participation in any number
+  of events. A $10 late fee is imposed for not registering before
+  Sunday April 8th.</p>
+
+<p>Registration fees must be <b>paid in full</b> the day of the
+  competition by cash or check. Registration fees are
+  non-refundable.</p>
+
+{% if form.errors %}<div class="errorWrapper"><p><strong>Please fill in the missing fields and correct the errors indicated below in red text.</strong></p></div>{% endif %}
+
+<form action="{% url 'register' %}" method="post">
+  {% csrf_token %}
+  <div class="errorWrapper">{{ form.non_field_errors }}</div>
+
+  <h2>Personal Information</h2>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.name.errors }}</div>
+    <label for="id_first_name">Name:</label>
+    {{ form.name }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.gender.errors }}</div>
+    <label for="id_gender">Gender:</label>
+    {{ form.gender }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.dob.errors }}</div>
+    <label for="id_dob">Date of Birth:</label>
+    {{ form.dob }}
+    <span>(Enter as mm/dd/yyyy, e.g. 02/22/1982)</span>
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.email.errors }}</div>
+    <label for="id_email">Email:</label>
+    {{ form.email }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.phone.errors }}</div>
+    <label for="id_phone">Phone:</label>
+    {{ form.phone }}
+    <span>(e.g. 123-456-7890)</span>
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.address1.errors }}</div>
+    <label for="id_address1">Address:</label>
+    {{ form.address1 }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.address2.errors }}</div>
+    <label for="id_address2">&nbsp;</label>
+    {{ form.address2 }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.city.errors }}</div>
+    <label for="id_city">City:</label>
+    {{ form.city }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.state.errors }}</div>
+    <label for="id_state">State:</label>
+    {{ form.state }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.zipcode.errors }}</div>
+    <label for="id_zipcode">Zipcode:</label>
+    {{ form.zipcode }}
+  </div>
+
+  <h2>Emergency Contact</h2>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.emergency_contact_name.errors }}</div>
+    <label for="id_emergency_contact_name">Name:</label>
+    {{ form.emergency_contact_name }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.emergency_contact_relation.errors }}</div>
+    <label for="id_emergency_contact_relation">Relation:</label>
+    {{ form.emergency_contact_relation }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.emergency_contact_phone.errors }}</div>
+    <label for="id_emergency_contact_phone">Phone:</label>
+    {{ form.emergency_contact_phone }}
+    <span>(e.g. 123-456-7890)</span>
+  </div>
+
+  <h2>Karate Experience</h2>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.rank.errors }}</div>
+    <label for="id_rank">Rank:</label>
+    {{ form.rank }}
+    {{ form.kyu_or_dan }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.belt_color.errors }}</div>
+    <label for="id_belt_color">Belt Color:</label>
+    {{ form.belt_color }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.years_training.errors }}</div>
+    <label for="id_belt_color">Years Training:</label>
+    {{ form.years_training }} 
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.school.errors }}</div>
+    <label for="id_school">School:</label>
+    {{ form.school }} 
+  </div>
+
+  <h2>Events</h2>
+  <div class="centered">
+    <table border="1" cellpadding="4">
+      <tr><th align="left">If you have been training</th><th align="left">Or your rank is</th><th align="left">Your division is</th></tr>
+      <tr><td>< 12 months</td><td>10th - 7th Kyu</td><td>Beginner</td></tr>
+      <tr><td>12 months - 2 years</td><td>6th - 4th Kyu</td><td>Intermediate</td></tr>
+      <tr><td>2 years +</td><td>3rd - 1st Kyu or a Dan rank</td><td>Advanced</td></tr>
+    </table>
+  </div>
+  <h4 style="text-align: left;">1. Individual Kata</h4>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.kata.errors }}</div>
+    <label for="id_kata">Kata:</label>
+    {{ form.kata }} 
+  </div>
+  <h4 style="text-align: left;">1. Individual Kumite</h4>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.kumite.errors }}</div>
+    <label for="id_kata">Kumite:</label>
+    {{ form.kumite }} 
+  </div>
+  <h4 style="text-align: left;">3. Team Kumite (College age or above, only!)</h4>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.team_kumite.errors }}</div>
+    <label style="width:100px">&nbsp;</label>
+    {{ form.team_kumite }} 
+    <span>I would like to participate in Team Kumite</span>
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.team_kumite_team_name.errors }}</div>
+    <label for="id_team_kumite_team_name">Team Name</label>
+    {{ form.team_kumite_team_name }} 
+    <span>*</span>
+  </div>
+  <p>* Teams of 3, please enter the same team name.  If your school
+    is sending multiple teams, please provide different names,
+    e.g. MIT A, MIT B</p>
+  <h4 style="text-align: left;">4. Boston Battle (College age or above, only!)</h4>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.boston_battle.errors }}</div>
+    <label style="width:100px">&nbsp;</label>
+    {{ form.boston_battle }} 
+    <span>I would like to participate in Team Kumite</span>
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.boston_battle_team_name.errors }}</div>
+    <label for="id_kata">Team Name:</label>
+    {{ form.boston_battle_team_name }} 
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.boston_battle_partner_name.errors }}</div>
+    <label for="id_kata">Partner Name:</label>
+    {{ form.boston_battle_partner_name }} 
+  </div>
+
+  <div><h2>Payment</h2></div>
+  <p>The preregistration fee for any number of events is $45,
+    payable in cash or check upon checking in at the door on the day
+    of the tournament, in addition to any late fees.  Checks should be 
+    made out to NECKC.  Payment of registration fee will be required 
+    prior to participation in any tournament events.</p>
+
+  <div class="centered"><input type="submit" value="Register"/></div>
+</form>
+{% endblock %}
