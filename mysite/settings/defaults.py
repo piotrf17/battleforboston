@@ -110,6 +110,7 @@ INSTALLED_APPS = (
   'django.contrib.staticfiles',
   'django.contrib.admin',
   'south',
+  'tourny',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
