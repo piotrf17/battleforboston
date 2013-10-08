@@ -7,14 +7,14 @@
 
 <h2>Overview</h2>
       
-<p>The registration tables will open at 9am on Sunday October 26,
+<p>The registration tables will open at 9am on Sunday October 26th,
   2013, and close at 11am for the youth division and at 1pm for
   college age and older. Boston Battle registration is allowed up
   until 1pm.</p>
       
 <p>The $25 registration fee covers participation in any number
   of events. A $10 late fee is imposed for not registering before
-  Sunday October 20, or for registering at the door.</p>
+  Sunday October 20th, or for registering at the door.</p>
 
 <p>Registration fees must be <b>paid in full</b> the day of the
   competition by cash or check. Registration fees are
@@ -78,6 +78,12 @@
     <div class="errorWrapper">{{ form.zipcode.errors }}</div>
     <label for="id_zipcode">Zipcode:</label>
     {{ form.zipcode }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.college_age.errors }}</div>
+    <label style="width:100px">&nbsp;</label>
+    {{ form.college_age }} 
+    <span>I am currently attending college.</span>
   </div>
 
   <h2>Emergency Contact</h2>

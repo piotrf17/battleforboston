@@ -48,6 +48,7 @@ class Person(models.Model):
   name = models.CharField(max_length=100)
   gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
   dob = models.DateField('date of birth')
+  college_age = models.BooleanField(blank=True)
   
   # Contact information.
   email = models.EmailField(max_length=254)
