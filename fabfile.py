@@ -12,7 +12,7 @@ def prepare_deploy():
 
 def deploy():
   with cd(env.project_root):
-    run('git pull')
+    run('git pull --no-edit')
     run('python manage.py migrate tourny')
     run('python manage.py collectstatic -v0 --noinput')
     run('touch /home8/battlef6/django.fcgi')
