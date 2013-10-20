@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from localflavor.us.models import PhoneNumberField
 from localflavor.us.models import USStateField
@@ -79,3 +81,11 @@ class Person(models.Model):
   boston_battle = models.BooleanField(blank=True)
   boston_battle_team_name = models.CharField(max_length=100, blank=True)
   boston_battle_partner_name = models.CharField(max_length=100, blank=True)
+
+  def age(self):
+    today = datetime.date.today()
+    if (today.month > self.dob.month or
+        (today.month == self.dob.month and today.day >= self.dob.day)):
+      return today.year - self.dob.year
+    else:
+      return today.year - self.dob.year + 1
