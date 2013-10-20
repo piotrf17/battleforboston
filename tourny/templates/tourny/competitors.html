@@ -1,0 +1,42 @@
+{% extends "tourny/base.html" %}
+
+{% block main %}
+
+<h2>Competitors</h2>
+
+{% if competitors %}
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Age</th>
+      <th>Kata</th>
+      <th>Kumite</th>
+      <th>Team Kumite</th>
+      <th>Boston Battle</th>
+    </tr>
+    {% for competitor in competitors %}
+      <tr class="{%cycle 'green' 'blue' %}">
+        <td>{{ competitor.name }}</td>
+	<td>{{ competitor.email }}</td>
+	<td>{{ competitor.age }}</td>
+	<td>
+	  {% if competitor.kata == 'A' %}Adv{% endif %}
+	  {% if competitor.kata == 'I' %}Int{% endif %}
+	  {% if competitor.kata == 'B' %}Beg{% endif %}
+	</td>
+	<td>
+	  {% if competitor.kumite == 'A' %}Adv{% endif %}
+	  {% if competitor.kumite == 'I' %}Int{% endif %}
+	  {% if competitor.kumite == 'B' %}Beg{% endif %}
+	</td>
+	<td>{{ competitor.team_kumite_team_name }}</td>
+	<td>{{ competitor.boston_battle_team_name }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <p>No registered competitors yet!</p>
+{% endif %}
+
+{% endblock %}

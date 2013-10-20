@@ -1,5 +1,6 @@
 # Views for the tourny app.
 
+from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -7,6 +8,7 @@ from django.template.loader import get_template
 from django.template import Context
 
 from tourny.forms import PersonForm
+from tourny.models import Person
 
 def send_registration_email(person):
   email_template = get_template('tourny/registration_email.txt')
@@ -30,3 +32,16 @@ def register(request):
   return render(request, 'tourny/register.html', {
       'form': form,
       })
+
+# Summarized view of competitors.
+@login_required
+def competitor_list(request):
+  competitors = Person.objects.all()
+  context = {'competitors' : competitors}
+  return render(request, 'tourny/competitors.html', context)
+
+def competitor_detail(request):
+  pass
+
+def competitor_edit(request):
+  pass

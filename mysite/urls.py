@@ -22,6 +22,11 @@ urlpatterns = patterns('',
     url(r'^register$', tourny_views.register, name='register'),
     url(r'^tourny/', include('tourny.urls', namespace='tourny')),
 
+    # Auth app - provides authentication for users.
+    url(r'^accounts/login/$',
+        'django.contrib.auth.views.login',
+        {'template_name': 'login.html'}),
+
     # Admin app.
     url(r'^admin/', include(admin.site.urls)),
 )

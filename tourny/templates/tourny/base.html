@@ -1,0 +1,27 @@
+{% load staticfiles %}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <title>Battle for Boston Admin</title>
+  <link rel="stylesheet" href="{% static 'css/tournytheme.css' %}">
+</head>
+<body>
+<div id="wrapper">
+  <div id="header">
+    <div id="headerNav">
+      <ul id="list-nav">
+        <li><a href="competitors">Competitors</a></li>
+        <li><a href="checkin">Check-In</a></li>
+        <li><a href="events">Events</a></li>
+        <li>&nbsp</li>
+      </ul>
+    </div>
+  </div>
+  <div id="main">
+    {% block main %}{% endblock %}
+  </div>
+</div>
+</body>
+</html> 
