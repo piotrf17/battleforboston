@@ -4,9 +4,15 @@
 
 <h2>Competitors</h2>
 
+<p>The following people are currently registered for the tournament.
+For further registration information (address, phone number, etc.) on
+a person, or to change any of their registration details, click on
+their row.</p>
+
 {% if competitors %}
   <table>
     <tr>
+      <th></th>
       <th>Name</th>
       <th>Email</th>
       <th>Age</th>
@@ -14,9 +20,12 @@
       <th>Kumite</th>
       <th>Team Kumite</th>
       <th>Boston Battle</th>
+      <th>Waiver?</th>
+      <th>Paid?</th>
     </tr>
     {% for competitor in competitors %}
       <tr class="{%cycle 'green' 'blue' %}">
+	<td>{{ forloop.counter }}</td>
         <td>{{ competitor.name }}</td>
 	<td>{{ competitor.email }}</td>
 	<td>{{ competitor.age }}</td>
@@ -32,11 +41,15 @@
 	</td>
 	<td>{{ competitor.team_kumite_team_name }}</td>
 	<td>{{ competitor.boston_battle_team_name }}</td>
+	<td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
+	<td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
       </tr>
     {% endfor %}
   </table>
 {% else %}
   <p>No registered competitors yet!</p>
 {% endif %}
+
+<br>
 
 {% endblock %}

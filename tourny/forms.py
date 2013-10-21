@@ -1,10 +1,10 @@
-from django.forms import ModelForm
-from django.forms import ValidationError
+from django.forms import Form, IntegerField, ModelForm, ValidationError
 
 from tourny.models import Person
 
-# Form for a person, primarily used for the registration page.
 class PersonForm(ModelForm):
+  """Form for a person, primarily used for the registration page."""
+
   class Meta:
     model = Person
 
@@ -33,3 +33,11 @@ class PersonForm(ModelForm):
       raise ValidationError('Please enter your Boston Battle teammate\'s name!')
 
     return cleaned_data
+
+class PaymentForm(Form):
+  """Form for taking in a payment
+
+  The payment amount is an editable field, the list of people
+  being paid for is a hidden field."""
+  
+  amount = IntegerField(min_value=0)

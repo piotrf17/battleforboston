@@ -1,0 +1,59 @@
+{% extends "tourny/base.html" %}
+
+{% block main %}
+
+<h2>Check-In</h2>
+
+<p>Checking in requires both payment and a signed waiver.  You can do
+each part independently, or together.  If accepting a payment, you
+will be redirected to a page where you can adjust the payment amount
+and print off a receipt.</p>
+
+{% if competitors %}
+<form action="{% url 'tourny:checkin' %}" method="post">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <th>Wavier</th>
+      <th>Pay</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Age</th>
+      <th>Kata</th>
+      <th>Kumite</th>
+      <th>Team Kumite</th>
+      <th>Boston Battle</th>
+    </tr>
+    {% for competitor in competitors %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td><input type="checkbox" name="waiver" value="{{ competitor.pk }}" {% if competitor.waiver %}checked disabled{% endif %}/></td>
+      <td><input type="checkbox" name="paid" value="{{ competitor.pk }}" {% if competitor.paid %}checked disabled{% endif %}/></td>
+      <td>{{ competitor.name }}</td>
+      <td>{{ competitor.email }}</td>
+      <td>{{ competitor.age }}</td>
+      <td>
+	{% if competitor.kata == 'A' %}Adv{% endif %}
+  	{% if competitor.kata == 'I' %}Int{% endif %}
+	{% if competitor.kata == 'B' %}Beg{% endif %}
+      </td>
+      <td>
+	{% if competitor.kumite == 'A' %}Adv{% endif %}
+	{% if competitor.kumite == 'I' %}Int{% endif %}
+	{% if competitor.kumite == 'B' %}Beg{% endif %}
+      </td>
+      <td>{{ competitor.team_kumite_team_name }}</td>
+      <td>{{ competitor.boston_battle_team_name }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <br>
+  <div class="centered">
+    <input type="submit" value="Checkin"/>
+  </div>
+  <br>
+</form>
+{% else %}
+<p>No registered competitors yet!</p>
+{% endif %}
+
+{% endblock %}

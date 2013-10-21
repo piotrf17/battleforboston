@@ -28,8 +28,19 @@ KARATE_SCHOOLS = (
   ('Rossini', 'Rossini Karate'),
 )
 
-# A person competing in the karate tournament.
+
+class Payment(models.Model):
+  """A payment to the tournament for a set of competitors."""
+  
+  amount = models.IntegerField()
+
+  def __unicode__(self):
+    return 'Amount: $%d' % self.amount
+
+
 class Person(models.Model):
+  """A person competing in the karate tournament."""
+
   GENDER_CHOICES = (
     ('M', 'Male'),
     ('F', 'Female'),
@@ -81,6 +92,15 @@ class Person(models.Model):
   boston_battle = models.BooleanField(blank=True)
   boston_battle_team_name = models.CharField(max_length=100, blank=True)
   boston_battle_partner_name = models.CharField(max_length=100, blank=True)
+
+  # Check-in state.
+  waiver = models.BooleanField(blank=True, default=False)
+  paid = models.BooleanField(blank=True, default=False)
+
+  payment = models.ForeignKey(Payment, null=True, on_delete=models.SET_NULL)
+
+  def __unicode__(self):
+    return self.name
 
   def age(self):
     today = datetime.date.today()
