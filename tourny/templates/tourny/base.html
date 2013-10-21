@@ -12,9 +12,10 @@
   <div id="header">
     <div id="headerNav">
       <ul id="list-nav">
-        <li><a href="competitors">Competitors</a></li>
-        <li><a href="checkin">Check-In</a></li>
-        <li><a href="events">Events</a></li>
+        <li><a href="{% url 'tourny:competitor_list' %}">Competitors</a></li>
+        <li><a href="{% url 'tourny:checkin' %}">Check-In</a></li>
+        <li><a href="{% url 'tourny:payment_list' %}">Payments</a></li>
+        <li><a href="#">Events</a></li>
         <li>&nbsp</li>
       </ul>
     </div>

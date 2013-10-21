@@ -1,0 +1,42 @@
+{% extends "tourny/base.html" %}
+
+{% block main %}
+
+<h2>Payment</h2>
+
+<p>You're accepting a payment for the following people:</p>
+
+<ul>
+{% for competitor in competitors %}
+  <li>{{ competitor.name }}</li>
+{% endfor %}
+</ul>
+
+<p>If you are missing people, or added someone by mistake, please use
+the back button on your browser to go back to the checkin page.</p>
+
+<p>The estimated cost is: <b>${{ estimated_cost }}</b></p>
+
+{% if competitors|length > 1 %}
+<p>If this is a youth family, the total cost should only be $40.  Please adjust
+it below.</p>
+{% endif %}
+
+<form action="{% url 'tourny:accept_payment' %}" method="post">
+  {% csrf_token %}
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.amount.errors }}</div>
+    <label for="id_amount">Payment Amount:</label>
+    {{ form.amount }}
+  </div>
+  {% for competitor in competitors %}
+  <input type="hidden" name="paid" value="{{ competitor.pk }}"/>
+  {% endfor %}
+  <div class="centered">
+    <input type="submit" value="Accept Payment">
+  </div>
+</form>
+
+<br>
+
+{% endblock %}

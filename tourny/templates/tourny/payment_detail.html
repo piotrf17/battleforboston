@@ -1,0 +1,17 @@
+{% extends "tourny/base.html" %}
+
+{% block main %}
+
+<h2>Payment Detail</h2>
+
+<p>Payment amount: <b>${{ payment.amount }}</b></p>
+<p>People on payment:</p>
+<ul>
+{% for competitor in competitors %}
+  <li>{{ competitor.name }}</li>
+{% endfor %}
+</ul>
+
+<p>TODO(piotrf): Print out a <a href="#">receipt</a>.</p>
+
+{% endblock %}
