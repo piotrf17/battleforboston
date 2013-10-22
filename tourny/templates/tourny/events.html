@@ -1,0 +1,18 @@
+{% extends "tourny/base.html" %}
+
+{% block main %}
+
+<h2>Events</h2>
+
+<p>This page allows you to create, modify and delete events.  You can also
+  generate brackets and enter results from a finished event.</p>
+
+{% if events %}
+{% else %}
+  <p><span class="error">No events created yet.</span>  To generate the default set of events, please
+    click <a href="{% url 'tourny:generate_default_events' %}">here</a>.</p>
+{% endif %}
+
+<br>
+
+{% endblock %}

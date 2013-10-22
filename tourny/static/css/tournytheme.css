@@ -112,3 +112,7 @@ tr.blue {
 tr.green {
   background: #485e49;
 }
+
+.error {
+  color: #ff0000;
+}

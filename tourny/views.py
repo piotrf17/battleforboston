@@ -139,3 +139,23 @@ def competitor_detail(request):
 @login_required
 def competitor_edit(request):
   pass
+
+
+@login_required
+def event_list(request):
+  """Summarized view of events.
+
+  Provides a list of events and gives controls to create, open, edit
+  and delete events."""
+  events = []
+  context = {'events' : events}
+  return render(request, 'tourny/events.html', context)
+  
+
+@login_required
+def generate_default_events(request):
+  """Create the default events for the tournament.
+
+  Create a predefined set of events, and prepopulate based on event
+  characteristics."""
+  return HttpResponseRedirect('../events')

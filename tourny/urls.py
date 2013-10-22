@@ -16,4 +16,7 @@ urlpatterns = patterns('',
   url(r'^payments/(?P<payment_id>\d+)$', views.payment_detail,
       name='payment_detail'),
   # Event management.
+  url(r'^events$', views.event_list, name='event_list'),
+  url(r'^events/gen_default$', views.generate_default_events,
+      name='generate_default_events'),
 )
