@@ -97,7 +97,7 @@ class Person(models.Model):
   waiver = models.BooleanField(blank=True, default=False)
   paid = models.BooleanField(blank=True, default=False)
 
-  payment = models.ForeignKey(Payment, null=True, on_delete=models.SET_NULL)
+  payment = models.ForeignKey(Payment, blank=True, null=True, on_delete=models.SET_NULL)
 
   def __unicode__(self):
     return self.name
@@ -109,3 +109,73 @@ class Person(models.Model):
       return today.year - self.dob.year
     else:
       return today.year - self.dob.year + 1
+
+  def age_division(self):
+    if self.college_age:
+      return 'C'
+    if self.age() > 25:
+      return 'O'
+    elif self.age() > 18:
+      return 'C'
+    else:
+      return 'Y'
+
+class Team(models.Model):
+  """A team of people that compete in an event."""
+  
+  name = models.CharField(max_length=100)
+  members = models.ManyToManyField(Person)
+
+  def __unicode__(self):
+    return self.name
+
+
+class Event(models.Model):
+  """An event that competitors/teams can participate in."""
+
+  GENDER_CHOICES = (
+    ('M', 'Male'),
+    ('F', 'Female'),
+    ('B', 'Both'),
+  )
+
+  EVENT_TYPE_CHOICES = (
+    ('A', 'Kata'),
+    ('B', 'Team Kata'),
+    ('U', 'Kumite'),
+    ('V', 'Team Kumite'),
+    ('B', 'Boston Battle'),
+  )
+
+  AGE_CHOICES = (
+    ('Y', 'Youth'),
+    ('C', 'College'),
+    ('O', 'Older'),
+    ('N', 'College and Older'),
+    ('A', 'All'),
+  )
+
+  EXPERIENCE_CHOICES = (
+    ('B', 'Beginner'),
+    ('I', 'Intermediate'),
+    ('A', 'Advanced'),
+    ('L', 'All'),
+  )
+
+  # Basic event information.
+  name = models.CharField(max_length=100)
+  event_type = models.CharField(max_length=1, choices=EVENT_TYPE_CHOICES)
+
+  # Division slicing parameters for events.  Mostly useful for prepopulating
+  # the event with people that fit the slice.
+  gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+  age = models.CharField(max_length=1, choices=AGE_CHOICES)
+  experience = models.CharField(max_length=1, choices=EXPERIENCE_CHOICES)
+
+  competitors = models.ManyToManyField(Person)
+
+  team_size = models.IntegerField(default=3)
+  teams = models.ManyToManyField(Team)
+
+  def __unicode__(self):
+    return self.name
