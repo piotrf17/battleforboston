@@ -97,7 +97,7 @@ class Person(models.Model):
   waiver = models.BooleanField(blank=True, default=False)
   paid = models.BooleanField(blank=True, default=False)
 
-  payment = models.ForeignKey(Payment, null=True, on_delete=models.SET_NULL)
+  payment = models.ForeignKey(Payment, blank=True, null=True, on_delete=models.SET_NULL)
 
   def __unicode__(self):
     return self.name
