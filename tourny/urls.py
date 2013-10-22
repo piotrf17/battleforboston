@@ -19,4 +19,5 @@ urlpatterns = patterns('',
   url(r'^events$', views.event_list, name='event_list'),
   url(r'^events/gen_default$', views.generate_default_events,
       name='generate_default_events'),
+  url(r'^events/(?P<event_id>\d+)$', views.event_detail, name='event_detail')
 )

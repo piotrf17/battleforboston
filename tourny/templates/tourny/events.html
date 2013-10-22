@@ -8,11 +8,49 @@
   generate brackets and enter results from a finished event.</p>
 
 {% if events %}
+<table cellpadding="5" border="1">
+  <tr>
+    <th>Delete</th>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Gender</th>
+    <th>Age</th>
+    <th>Experience</th>
+  </tr>
+  {% for event in events %}
+  <tr>
+    <td><input type="checkbox" name="delete" value="{{ event.pk }}"/></td>
+    <td>{{ event.name }}</td>
+    <td>
+      {% if event.event_type == 'A' %}Kata{% endif %}
+      {% if event.event_type == 'U' %}Kumite{% endif %}
+      {% if event.event_type == 'B' %}Boston Battle{% endif %}
+    </td>
+    <td>
+      {% if event.gender == 'M' %}Male{% endif %}
+      {% if event.gender == 'F' %}Female{% endif %}
+      {% if event.gender == 'B' %}Both{% endif %}
+    </td>
+    <td>
+      {% if event.age == 'Y' %}Youth{% endif %}
+      {% if event.age == 'C' %}College{% endif %}
+      {% if event.age == 'O' %}Older{% endif %}
+      {% if event.age == 'N' %}College & Older{% endif %}
+      {% if event.age == 'A' %}All{% endif %}
+    </td>
+    <td>
+      {% if event.experience == 'B' %}Beginner{% endif %}
+      {% if event.experience == 'I' %}Intermediate{% endif %}
+      {% if event.experience == 'A' %}Advanced{% endif %}
+      {% if event.experience == 'L' %}All{% endif %}
+    </td>
+    <td><a href="{% url 'tourny:event_detail' event.pk %}">Edit</a></td>
+  </tr>
+  {% endfor %}
+</table>
 {% else %}
-  <p><span class="error">No events created yet.</span>  To generate the default set of events, please
-    click <a href="{% url 'tourny:generate_default_events' %}">here</a>.</p>
+<p><span class="error">No events created yet.</span>  To generate the default set of events, please click <a href="{% url 'tourny:generate_default_events' %}">here</a>.</p>
 {% endif %}
-
 <br>
 
 {% endblock %}

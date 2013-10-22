@@ -110,12 +110,24 @@ class Person(models.Model):
     else:
       return today.year - self.dob.year + 1
 
+  def age_division(self):
+    if self.college_age:
+      return 'C'
+    if self.age() > 25:
+      return 'O'
+    elif self.age() > 18:
+      return 'C'
+    else:
+      return 'Y'
 
 class Team(models.Model):
   """A team of people that compete in an event."""
   
   name = models.CharField(max_length=100)
   members = models.ManyToManyField(Person)
+
+  def __unicode__(self):
+    return self.name
 
 
 class Event(models.Model):
@@ -129,7 +141,9 @@ class Event(models.Model):
 
   EVENT_TYPE_CHOICES = (
     ('A', 'Kata'),
+    ('B', 'Team Kata'),
     ('U', 'Kumite'),
+    ('V', 'Team Kumite'),
     ('B', 'Boston Battle'),
   )
 
@@ -158,18 +172,10 @@ class Event(models.Model):
   age = models.CharField(max_length=1, choices=AGE_CHOICES)
   experience = models.CharField(max_length=1, choices=EXPERIENCE_CHOICES)
 
-  class Meta:
-    abstract = True
-
-
-class IndividualEvent(Event):
-  """An event for individual competitors."""
-  
   competitors = models.ManyToManyField(Person)
 
-
-class TeamEvent(Event):
-  """An event for teams."""
-
   team_size = models.IntegerField(default=3)
-  competitors = models.ManyToManyField(Team)
+  teams = models.ManyToManyField(Team)
+
+  def __unicode__(self):
+    return self.name

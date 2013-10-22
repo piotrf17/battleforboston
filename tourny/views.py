@@ -7,8 +7,8 @@ from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
 from django.template import Context
 
+from tourny import models as m
 from tourny.forms import PersonForm, PaymentForm
-from tourny.models import Payment, Person
 
 ###################################################################
 # Registration Components.
@@ -62,14 +62,14 @@ def checkin(request):
   if request.method == 'POST':
     # Process waivers silently.
     for pk in request.POST.getlist('waiver'):
-      person = Person.objects.get(pk=pk)
+      person = m.Person.objects.get(pk=pk)
       person.waiver = True
       person.save()
     # If there are payments, we go to another page to process the payment.
     if len(request.POST.getlist('paid')):
       return accept_payment(request)
   competitors = []
-  for competitor in Person.objects.all():
+  for competitor in m.Person.objects.all():
     if competitor.paid == False or competitor.waiver == False:
       competitors.append(competitor)
   context = {'competitors' : competitors}
@@ -86,7 +86,7 @@ def accept_payment(request):
   competitors = []
   cost_per_competitor = 25   # TODO(piotrf): don't hardcode the cost.
   for pk in request.POST.getlist('paid'):
-    competitors.append(Person.objects.get(pk=pk))
+    competitors.append(m.Person.objects.get(pk=pk))
   estimated_cost = cost_per_competitor * len(competitors)
 
   if 'amount' in request.POST:
@@ -111,13 +111,13 @@ def accept_payment(request):
 
 @login_required
 def payment_list(request):
-  context = {'payments' : Payment.objects.all()}
+  context = {'payments' : m.Payment.objects.all()}
   return render(request, 'tourny/payments.html', context)
   
 
 @login_required
 def payment_detail(request, payment_id):
-  payment = get_object_or_404(Payment, pk=payment_id)
+  payment = get_object_or_404(m.Payment, pk=payment_id)
   context = {'payment': payment,
              'competitors': payment.person_set.all()}
   return render(request, 'tourny/payment_detail.html', context)
@@ -126,7 +126,7 @@ def payment_detail(request, payment_id):
 @login_required
 def competitor_list(request):
   """Summarized view of competitors."""
-  competitors = Person.objects.all()
+  competitors = m.Person.objects.all()
   context = {'competitors' : competitors}
   return render(request, 'tourny/competitors.html', context)
 
@@ -147,8 +147,7 @@ def event_list(request):
 
   Provides a list of events and gives controls to create, open, edit
   and delete events."""
-  events = []
-  context = {'events' : events}
+  context = {'events' : m.Event.objects.all()}
   return render(request, 'tourny/events.html', context)
   
 
@@ -158,4 +157,49 @@ def generate_default_events(request):
 
   Create a predefined set of events, and prepopulate based on event
   characteristics."""
+  # Individual Kumite events.
+  for gender in ['M', 'F']:
+    for age in ['Y', 'C', 'O']:
+      for experience in ['B', 'I', 'A']:
+        m.Event.objects.create(name='Default',
+                               event_type='U',
+                               gender=gender,
+                               age=age,
+                               experience=experience)
+  # Individual Kata events.
+  for age in ['Y', 'N']:
+    for experience in ['B', 'I', 'A']:
+      m.Event.objects.create(name='Default',
+                             event_type='A',
+                             gender='B',
+                             age=age,
+                             experience=experience)
   return HttpResponseRedirect('../events')
+
+
+@login_required
+def event_detail(request, event_id):
+  event = get_object_or_404(m.Event, pk=event_id)
+  competitors = []
+  # Filter by event type and experience level.
+  # TODO(piotrf): handle event experience level of "All"
+  if event.event_type == 'A':
+    competitors = m.Person.objects.filter(kata=event.experience)
+  elif event.event_type == 'U':
+    competitors = m.Person.objects.filter(kumite=event.experience)
+  else:
+    return HttpResponseRedirect('../events')
+  # Filter by gender.
+  if event.gender != 'B':
+    competitors = competitors.filter(gender=event.gender)
+  # Filter by age.
+  filtered_competitors = []
+  for competitor in competitors:
+    if (event.age == 'A' or 
+        event.age == competitor.age_division() or
+        (event.age == 'N' and (competitor.age_division() == 'C' or
+                               competitor.age_division() == 'O'))):
+      filtered_competitors.append(competitor)
+  context = {'event': event,
+             'competitors': filtered_competitors}
+  return render(request, 'tourny/event_detail.html', context)
