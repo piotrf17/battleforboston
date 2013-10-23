@@ -177,10 +177,8 @@ def generate_default_events(request):
   return HttpResponseRedirect('../events')
 
 
-@login_required
-def event_detail(request, event_id):
-  event = get_object_or_404(m.Event, pk=event_id)
-  competitors = []
+def get_preregistered_for_event(event):
+  """Get the people preregistered for the given event."""
   # Filter by event type and experience level.
   # TODO(piotrf): handle event experience level of "All"
   if event.event_type == 'A':
@@ -188,7 +186,7 @@ def event_detail(request, event_id):
   elif event.event_type == 'U':
     competitors = m.Person.objects.filter(kumite=event.experience)
   else:
-    return HttpResponseRedirect('../events')
+    return []
   # Filter by gender.
   if event.gender != 'B':
     competitors = competitors.filter(gender=event.gender)
@@ -200,6 +198,51 @@ def event_detail(request, event_id):
         (event.age == 'N' and (competitor.age_division() == 'C' or
                                competitor.age_division() == 'O'))):
       filtered_competitors.append(competitor)
-  context = {'event': event,
-             'competitors': filtered_competitors}
+  return filtered_competitors
+
+
+@login_required
+def event_detail(request, event_id):
+  event = get_object_or_404(m.Event, pk=event_id)
+  # We have 3 different sets of competitors:
+  #   event_competitors = people currently in the event
+  #   event_competitors_prereg = registered, but not in the event
+  #   other_competitors = everyone else
+  # The reason is that when the event is opened, some competitors may not have
+  # finished registration yet, and so will not be put in the event unless
+  # manually overridden.
+  event_competitors = event.competitors.all()
+  event_competitors_prereg = []
+  for competitor in get_preregistered_for_event(event):
+    if competitor not in event_competitors:
+      event_competitors_prereg.append(competitor)
+  other_competitors = []
+  for competitor in m.Person.objects.all():
+    if (competitor not in event_competitors and
+        competitor not in event_competitors_prereg):
+      other_competitors.append(competitor)
+  context = {'event' : event,
+             'event_competitors' : event_competitors,
+             'event_competitors_prereg' : event_competitors_prereg,
+             'other_competitors' : other_competitors}
   return render(request, 'tourny/event_detail.html', context)
+
+
+@login_required
+def event_add_competitors(request, event_id):
+  """Add competitors to a given event."""
+  event = get_object_or_404(m.Event, pk=event_id)
+  if request.method == 'POST':
+    for pk in request.POST.getlist('add'):
+      event.competitors.add(pk)
+  return HttpResponseRedirect('../%s' % event_id)
+
+
+@login_required
+def event_remove_competitors(request, event_id):
+  """Remove competitors from a given event."""
+  event = get_object_or_404(m.Event, pk=event_id)
+  if request.method == 'POST':
+    for pk in request.POST.getlist('remove'):
+      event.competitors.remove(pk)
+  return HttpResponseRedirect('../%s' % event_id)

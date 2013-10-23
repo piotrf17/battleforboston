@@ -19,5 +19,11 @@ urlpatterns = patterns('',
   url(r'^events$', views.event_list, name='event_list'),
   url(r'^events/gen_default$', views.generate_default_events,
       name='generate_default_events'),
-  url(r'^events/(?P<event_id>\d+)$', views.event_detail, name='event_detail')
+  url(r'^events/(?P<event_id>\d+)$', views.event_detail, name='event_detail'),
+  url(r'^events/(?P<event_id>\d+)/remove_competitors',
+      views.event_remove_competitors,
+      name='event_remove_competitors'),
+  url(r'^events/(?P<event_id>\d+)/add_competitors',
+      views.event_add_competitors,
+      name='event_add_competitors'),
 )

@@ -44,7 +44,7 @@
       {% if event.experience == 'A' %}Advanced{% endif %}
       {% if event.experience == 'L' %}All{% endif %}
     </td>
-    <td><a href="{% url 'tourny:event_detail' event.pk %}">Edit</a></td>
+    <td><a href="{% url 'tourny:event_detail' event.pk %}">Competitors</a></td>
   </tr>
   {% endfor %}
 </table>
