@@ -27,5 +27,7 @@ urlpatterns = patterns('',
   url(r'^events/(?P<event_id>\d+)/add_competitors',
       views.event_add_competitors,
       name='event_add_competitors'),
-  url(r'^events/(?P<event_id>\d+)/open', views.event_open, name='event_open'),                   
+  url(r'^events/(?P<event_id>\d+)/open', views.event_open, name='event_open'),
+  url(r'^events/(?P<event_id>\d+)/bracket', views.event_bracket,
+      name='event_bracket'),
 )

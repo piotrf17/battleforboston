@@ -1,13 +1,16 @@
 # Views for the tourny app.
 
+import collections
+
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
 from django.template import Context
 
 from tourny import models as m
+from tourny import bracket
 from tourny.forms import PersonForm, PaymentForm
 
 ###################################################################
@@ -279,3 +282,29 @@ def event_remove_competitors(request, event_id):
     for pk in request.POST.getlist('remove'):
       event.competitors.remove(pk)
   return HttpResponseRedirect('../%s' % event_id)
+
+
+@login_required
+def event_bracket(request, event_id):
+  """Generate a bracket for the event."""
+  event = get_object_or_404(m.Event, pk=event_id)
+
+  # Generate a pdf response.
+  response = HttpResponse(content_type="application/pdf")
+  response['Content-Disposition'] = 'attachment; filename="bracket.pdf"'
+
+  competition = 'TODO(piotrf): fill me in'
+  Competitor = collections.namedtuple('Competitor', 'name experience school')
+
+  if event.event_type == 'U':
+    competitors = []
+    for competitor in event.competitors.all():
+      competitors.append(Competitor(competitor.name,
+                                    competitor.years_training,
+                                    competitor.school))
+    ordered_competitors = bracket.seed_bracket(competitors)
+    bracket.generate_bracket(response, competition,
+                             '2013 - Battle for Boston - NECKC/NAKF',
+                             ordered_competitors)
+    return response
+  return HttpResponseRedirect('../../events')

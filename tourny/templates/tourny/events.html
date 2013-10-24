@@ -49,7 +49,7 @@
     </td>
     <td><a href="{% url 'tourny:event_detail' event.pk %}">Competitors</a></td>
     {% if event.state == 'O' %}
-    <td><a href="#">Bracket</a></td>
+    <td><a href="{% url 'tourny:event_bracket' event.pk %}">Bracket</a></td>
     {% endif %}
   </tr>
   {% endfor %}
