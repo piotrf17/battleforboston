@@ -162,6 +162,12 @@ class Event(models.Model):
     ('L', 'All'),
   )
 
+  EVENT_STATES_CHOICES = (
+    ('C', 'Created'),
+    ('O', 'Open'),
+    ('F', 'Finished'),
+  )
+
   # Basic event information.
   name = models.CharField(max_length=100)
   event_type = models.CharField(max_length=1, choices=EVENT_TYPE_CHOICES)
@@ -176,6 +182,9 @@ class Event(models.Model):
 
   team_size = models.IntegerField(default=3)
   teams = models.ManyToManyField(Team)
+
+  state = models.CharField(max_length=1, choices=EVENT_STATES_CHOICES,
+                           default='C')
 
   def __unicode__(self):
     return self.name

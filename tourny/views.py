@@ -149,7 +149,16 @@ def event_list(request):
   and delete events."""
   context = {'events' : m.Event.objects.all()}
   return render(request, 'tourny/events.html', context)
-  
+
+
+@login_required
+def event_delete(request):
+  """Delete a set of events."""
+  if request.method == 'POST':
+    for pk in request.POST.getlist('delete'):
+      m.Event.objects.get(pk=pk).delete()
+  return HttpResponseRedirect('../events')
+
 
 @login_required
 def generate_default_events(request):
@@ -204,29 +213,53 @@ def get_preregistered_for_event(event):
 @login_required
 def event_detail(request, event_id):
   event = get_object_or_404(m.Event, pk=event_id)
-  # We have 3 different sets of competitors:
-  #   event_competitors = people currently in the event
-  #   event_competitors_prereg = registered, but not in the event
-  #   other_competitors = everyone else
-  # The reason is that when the event is opened, some competitors may not have
-  # finished registration yet, and so will not be put in the event unless
-  # manually overridden.
-  event_competitors = event.competitors.all()
-  event_competitors_prereg = []
-  for competitor in get_preregistered_for_event(event):
-    if competitor not in event_competitors:
-      event_competitors_prereg.append(competitor)
-  other_competitors = []
-  for competitor in m.Person.objects.all():
-    if (competitor not in event_competitors and
-        competitor not in event_competitors_prereg):
-      other_competitors.append(competitor)
-  context = {'event' : event,
-             'event_competitors' : event_competitors,
-             'event_competitors_prereg' : event_competitors_prereg,
-             'other_competitors' : other_competitors}
-  return render(request, 'tourny/event_detail.html', context)
+  if event.state == 'C':
+    competitors_prereg_check = []
+    competitors_prereg = []
+    for competitor in get_preregistered_for_event(event):
+      if competitor.paid and competitor.waiver:
+        competitors_prereg_check.append(competitor)
+      else:
+        competitors_prereg.append(competitor)
+    context = {'event' : event,
+               'competitors_prereg_check' : competitors_prereg_check,
+               'competitors_prereg' : competitors_prereg}
+    return render(request, 'tourny/event_detail.html', context)
+  elif event.state == 'O':
+    # We have 3 different sets of competitors:
+    #   event_competitors = people currently in the event
+    #   event_competitors_prereg = registered, but not in the event
+    #   other_competitors = everyone else
+    # The reason is that when the event is opened, some competitors may not have
+    # finished registration yet, and so will not be put in the event unless
+    # manually overridden.
+    event_competitors = event.competitors.all()
+    event_competitors_prereg = []
+    for competitor in get_preregistered_for_event(event):
+      if competitor not in event_competitors:
+        event_competitors_prereg.append(competitor)
+    other_competitors = []
+    for competitor in m.Person.objects.all():
+      if (competitor not in event_competitors and
+          competitor not in event_competitors_prereg):
+        other_competitors.append(competitor)
+    context = {'event' : event,
+               'event_competitors' : event_competitors,
+               'event_competitors_prereg' : event_competitors_prereg,
+               'other_competitors' : other_competitors}
+    return render(request, 'tourny/event_detail.html', context)
 
+
+@login_required
+def event_open(request, event_id):
+  event = get_object_or_404(m.Event, pk=event_id)
+  if event.state == 'C':
+    event.state = 'O'
+    for competitor in get_preregistered_for_event(event):
+      if competitor.paid and competitor.waiver:
+        event.competitors.add(competitor)
+    event.save()
+  return HttpResponseRedirect('../%s' % event_id)
 
 @login_required
 def event_add_competitors(request, event_id):

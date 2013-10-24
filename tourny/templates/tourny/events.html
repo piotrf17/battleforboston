@@ -8,7 +8,10 @@
   generate brackets and enter results from a finished event.</p>
 
 {% if events %}
-<table cellpadding="5" border="1">
+<div class="centered">
+<form action="{% url 'tourny:event_delete' %}" method="post">
+{% csrf_token %}
+<table cellpadding="5">
   <tr>
     <th>Delete</th>
     <th>Name</th>
@@ -18,7 +21,7 @@
     <th>Experience</th>
   </tr>
   {% for event in events %}
-  <tr>
+  <tr class="{%cycle 'green' 'blue' %}">
     <td><input type="checkbox" name="delete" value="{{ event.pk }}"/></td>
     <td>{{ event.name }}</td>
     <td>
@@ -45,9 +48,16 @@
       {% if event.experience == 'L' %}All{% endif %}
     </td>
     <td><a href="{% url 'tourny:event_detail' event.pk %}">Competitors</a></td>
+    {% if event.state == 'O' %}
+    <td><a href="#">Bracket</a></td>
+    {% endif %}
   </tr>
   {% endfor %}
 </table>
+<br>
+<input type="submit" value="Delete selected events"/>
+</form>
+</div>
 {% else %}
 <p><span class="error">No events created yet.</span>  To generate the default set of events, please click <a href="{% url 'tourny:generate_default_events' %}">here</a>.</p>
 {% endif %}

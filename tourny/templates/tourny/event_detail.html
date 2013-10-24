@@ -27,6 +27,84 @@
   {% if event.experience == 'L' %}All{% endif %}
 </h2>
 
+{# ================================================================== #}
+{#                  Event has been created.                           #}
+{# ================================================================== #}
+{% if event.state == 'C' %}
+
+<p>The following people are preregistered for this event, and checked in:</p>
+<div class="centered">
+{% if competitors_prereg_check %}
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Rank</th>
+      <th>Years Training</th>
+      <th>Waiver?</th>
+      <th>Paid?</th>
+    </tr>
+  {% for competitor in competitors_prereg_check %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td>{{ competitor.name }}</td>
+      <td>{{ competitor.gender }}</td>
+      <td>{{ competitor.age }}</td>
+      <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
+      <td>{{ competitor.years_training }}</td>
+      <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
+      <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </table>
+  <br>
+{% else %}
+  <p class="error">No competitors currently checked in.</p>
+{% endif %}
+</div>
+
+<p>The following people are preregistered for this event, but not checked in:</p>
+<div class="centered">
+{% if competitors_prereg %}
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Rank</th>
+      <th>Years Training</th>
+      <th>Waiver?</th>
+      <th>Paid?</th>
+    </tr>
+  {% for competitor in competitors_prereg %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td>{{ competitor.name }}</td>
+      <td>{{ competitor.gender }}</td>
+      <td>{{ competitor.age }}</td>
+      <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
+      <td>{{ competitor.years_training }}</td>
+      <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
+      <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </table>
+  <br>
+{% else %}
+  <p class="error">No competitors currently preregistered.</p>
+{% endif %}
+</div>
+
+<p>If you are ready to start generating brackets for this event, click
+  <b><a href="{% url 'tourny:event_open' event.pk %}">here</a></b>.  Opening
+  the event will automatically add all people preregistered and checked in
+  into the event.  After opening, you will also have the option of manually
+  adding and removing competitors.</p>
+
+{% else %}
+{# ================================================================== #}
+{#                  Event has been opened.                            #}
+{# ================================================================== #}
+{% if event.state == 'O' %}
 <p>The following people are currently in this event:</p>
 <div class="centered">
 {% if event_competitors %}
@@ -137,5 +215,14 @@
 <p class="error">No other competitors.</p>
 {% endif %}
 </div>
+
+{% else %} 
+{# ================================================================== #}
+{#                  Event has finished.                               #}
+{# ================================================================== #}
+<p>The event is now finished.<p>
+
+{% endif %}
+{% endif %}
 
 {% endblock %}
