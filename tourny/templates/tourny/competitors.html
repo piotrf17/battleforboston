@@ -15,6 +15,7 @@ their row.</p>
       <th></th>
       <th>Name</th>
       <th>Email</th>
+      <th>Gen</th>
       <th>Age</th>
       <th>Kata</th>
       <th>Kumite</th>
@@ -28,6 +29,7 @@ their row.</p>
 	<td>{{ forloop.counter }}</td>
         <td>{{ competitor.name }}</td>
 	<td>{{ competitor.email }}</td>
+	<td>{{ competitor.gender }}</td>
 	<td>{{ competitor.age }}</td>
 	<td>
 	  {% if competitor.kata == 'A' %}Adv{% endif %}

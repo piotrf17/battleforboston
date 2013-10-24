@@ -21,6 +21,7 @@
       <th>Age</th>
       <th>Rank</th>
       <th>Years Training</th>
+      <th>School</th>
       <th>Waiver?</th>
       <th>Paid?</th>
     </tr>
@@ -31,6 +32,7 @@
       <td>{{ competitor.age }}</td>
       <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
       <td>{{ competitor.years_training }}</td>
+      <td>{{ competitor.get_school_display }}</td>
       <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
       <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
     </tr>
@@ -52,6 +54,7 @@
       <th>Age</th>
       <th>Rank</th>
       <th>Years Training</th>
+      <th>School</th>
       <th>Waiver?</th>
       <th>Paid?</th>
     </tr>
@@ -62,6 +65,7 @@
       <td>{{ competitor.age }}</td>
       <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
       <td>{{ competitor.years_training }}</td>
+      <td>{{ competitor.get_school_display }}</td>
       <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
       <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
     </tr>
@@ -97,6 +101,7 @@
       <th>Age</th>
       <th>Rank</th>
       <th>Years Training</th>
+      <th>School</th>
       <th>Waiver?</th>
       <th>Paid?</th>
     </tr>
@@ -108,6 +113,7 @@
       <td>{{ competitor.age }}</td>
       <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
       <td>{{ competitor.years_training }}</td>
+      <td>{{ competitor.get_school_display }}</td>
       <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
       <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
     </tr>
@@ -134,6 +140,7 @@
       <th>Age</th>
       <th>Rank</th>
       <th>Years Training</th>
+      <th>School</th>
       <th>Waiver?</th>
       <th>Paid?</th>
     </tr>
@@ -145,6 +152,7 @@
       <td>{{ competitor.age }}</td>
       <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
       <td>{{ competitor.years_training }}</td>
+      <td>{{ competitor.get_school_display }}</td>
       <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
       <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
     </tr>
@@ -171,6 +179,7 @@
       <th>Age</th>
       <th>Rank</th>
       <th>Years Training</th>
+      <th>School</th>
       <th>Waiver?</th>
       <th>Paid?</th>
     </tr>
@@ -182,6 +191,7 @@
       <td>{{ competitor.age }}</td>
       <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
       <td>{{ competitor.years_training }}</td>
+      <td>{{ competitor.get_school_display }}</td>
       <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
       <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
     </tr>
