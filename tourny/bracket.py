@@ -100,7 +100,7 @@ def generate_bracket(response, title, footnote, competitor_names):
 # generate a competition bracket given a seeding    
 # competitor_array = [namedtuple(name, experience, school)]
 def seed_bracket(competitor_array):
-  Competitor = collections.namedtuple('Competitor', 'name experience school')
+  Competitor = collections.namedtuple('Competitor', 'name rank experience school')
 
   ranked_competitor_array=sorted(competitor_array, 
                                  key=lambda competitor_array: competitor_array.experience,
@@ -118,7 +118,7 @@ def seed_bracket(competitor_array):
   missing_entries = int(total_number-competitor_number)
   if missing_entries > 0:
     for i in range(0,missing_entries):
-      ranked_competitor_array.append(Competitor(' ',-1,'bye%d'%i))
+      ranked_competitor_array.append(Competitor('Bye','',-1,'bye%d'%i))
 
   # Start optimization.
   seeded_bracket_array=[]

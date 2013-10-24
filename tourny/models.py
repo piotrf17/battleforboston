@@ -120,6 +120,9 @@ class Person(models.Model):
     else:
       return 'Y'
 
+  def formatted_rank(self):
+    return self.rank + ' ' + self.kyu_or_dan
+
 class Team(models.Model):
   """A team of people that compete in an event."""
   
@@ -187,4 +190,20 @@ class Event(models.Model):
                            default='C')
 
   def __unicode__(self):
-    return self.name
+    if self.name == 'Default':
+      name = self.get_event_type_display()
+    else:
+      name = self.name + '::' + self.get_event_type_display()
+    if self.gender != 'B':
+      if name != '':
+        name += '::'
+      name += self.get_gender_display()
+    if self.experience != 'L':
+      if name != '':
+        name += '::'
+      name += self.get_experience_display()
+    if self.age != 'A':
+      if name != '':
+        name += '::'
+      name += self.get_age_display()
+    return name

@@ -3,28 +3,7 @@
 {% block main %}
 
 <h2>
-  Event Detail - 
-
-  {{ event.name }}
-  ::
-  {% if event.event_type == 'A' %}Kata{% endif %}
-  {% if event.event_type == 'U' %}Kumite{% endif %}
-  {% if event.event_type == 'B' %}Boston Battle{% endif %}
-  ::
-  {% if event.gender == 'M' %}Male{% endif %}
-  {% if event.gender == 'F' %}Female{% endif %}
-  {% if event.gender == 'B' %}Both{% endif %}
-  ::
-  {% if event.age == 'Y' %}Youth{% endif %}
-  {% if event.age == 'C' %}College{% endif %}
-  {% if event.age == 'O' %}Older{% endif %}
-  {% if event.age == 'N' %}College & Older{% endif %}
-  {% if event.age == 'A' %}All{% endif %}
-  ::
-  {% if event.experience == 'B' %}Beginner{% endif %}
-  {% if event.experience == 'I' %}Intermediate{% endif %}
-  {% if event.experience == 'A' %}Advanced{% endif %}
-  {% if event.experience == 'L' %}All{% endif %}
+  Event Detail - {{ event }}
 </h2>
 
 {# ================================================================== #}

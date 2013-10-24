@@ -10,7 +10,7 @@ from django.template.loader import get_template
 from django.template import Context
 
 from tourny import models as m
-from tourny import bracket
+from tourny import bracket, listing
 from tourny.forms import PersonForm, PaymentForm
 
 ###################################################################
@@ -293,18 +293,24 @@ def event_bracket(request, event_id):
   response = HttpResponse(content_type="application/pdf")
   response['Content-Disposition'] = 'attachment; filename="bracket.pdf"'
 
-  competition = 'TODO(piotrf): fill me in'
-  Competitor = collections.namedtuple('Competitor', 'name experience school')
-
-  if event.event_type == 'U':
+  # Gather competitors or teams
+  if event.event_type in ['U', 'A']:
+    Competitor = collections.namedtuple('Competitor', 'name rank experience school')
     competitors = []
     for competitor in event.competitors.all():
       competitors.append(Competitor(competitor.name,
+                                    competitor.formatted_rank(),
                                     competitor.years_training,
-                                    competitor.school))
+                                    competitor.get_school_display()))
+
+  if event.event_type == 'U':
     ordered_competitors = bracket.seed_bracket(competitors)
-    bracket.generate_bracket(response, competition,
+    bracket.generate_bracket(response, unicode(event),
                              '2013 - Battle for Boston - NECKC/NAKF',
                              ordered_competitors)
     return response
+  elif event.event_type == 'A':
+    listing.listing(response, unicode(event), competitors)
+    return response
+                                    
   return HttpResponseRedirect('../../events')
