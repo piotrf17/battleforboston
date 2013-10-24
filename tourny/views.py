@@ -11,7 +11,7 @@ from django.template import Context
 
 from tourny import models as m
 from tourny import bracket, listing
-from tourny.forms import PersonForm, PaymentForm
+from tourny.forms import PersonForm, PaymentForm, EventForm
 
 ###################################################################
 # Registration Components.
@@ -152,6 +152,21 @@ def event_list(request):
   and delete events."""
   context = {'events' : m.Event.objects.all()}
   return render(request, 'tourny/events.html', context)
+
+
+@login_required
+def event_add(request):
+  """Add a new event."""
+  if request.method == 'POST':
+    form = EventForm(request.POST)
+    if form.is_valid():
+      event = form.save()
+      return HttpResponseRedirect('../events')
+  else:
+    form = EventForm(initial={'state':'C'})
+  return render(request, 'tourny/event_add.html', {
+      'form' : form
+      })
 
 
 @login_required

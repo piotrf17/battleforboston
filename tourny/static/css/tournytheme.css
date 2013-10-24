@@ -116,3 +116,21 @@ tr.green {
 .error {
   color: #ff0000;
 }
+
+div.fieldWrapper
+{
+  margin: 5px;
+}
+
+div.fieldWrapper label
+{
+  width: 150px;
+  float: left;
+  text-align: right;
+  padding-right: 5px;
+}
+
+div.errorWrapper
+{
+  color: #ff0000;
+}

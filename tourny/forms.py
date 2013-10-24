@@ -1,6 +1,6 @@
 from django.forms import Form, IntegerField, ModelForm, ValidationError
 
-from tourny.models import Person
+from tourny.models import Person, Event
 
 class PersonForm(ModelForm):
   """Form for a person, primarily used for the registration page."""
@@ -34,6 +34,7 @@ class PersonForm(ModelForm):
 
     return cleaned_data
 
+
 class PaymentForm(Form):
   """Form for taking in a payment
 
@@ -41,3 +42,20 @@ class PaymentForm(Form):
   being paid for is a hidden field."""
   
   amount = IntegerField(min_value=0)
+
+
+class EventForm(ModelForm):
+  """Form for a new event."""
+  
+  class Meta:
+    model = Event
+    fields = ('name', 'event_type', 'gender', 'age', 'experience', 'team_size')
+
+  def clean(self):
+    cleaned_data = super(EventForm, self).clean()
+
+    # Boston battle has 2 person teams.
+    event_type = cleaned_data.get('event_type')
+    team_size = cleaned_data.get('team_size')
+    if event_type == 'O' and team_size != 2:
+      raise ValidationError('Boston battle has 2 person teams!')

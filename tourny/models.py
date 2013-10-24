@@ -186,10 +186,10 @@ class Event(models.Model):
   age = models.CharField(max_length=1, choices=AGE_CHOICES)
   experience = models.CharField(max_length=1, choices=EXPERIENCE_CHOICES)
 
-  competitors = models.ManyToManyField(Person)
+  competitors = models.ManyToManyField(Person, blank=True, null=True)
 
   team_size = models.IntegerField(default=3)
-  teams = models.ManyToManyField(Team)
+  teams = models.ManyToManyField(Team, blank=True, null=True)
 
   state = models.CharField(max_length=1, choices=EVENT_STATES_CHOICES,
                            default='C')

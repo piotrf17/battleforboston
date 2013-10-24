@@ -1,0 +1,57 @@
+{% extends "tourny/base.html" %}
+
+{% block main %}
+
+<h2>Add an Event</h2>
+
+<p>Here you can create a new, custom event for the tournament.  By default
+  most of the events you want can be automatically generated from the events
+  page, so you should rarely need to create a new event.</p>
+
+{% if form.errors %}<div class="errorWrapper"><p><strong>Please fill in the missing fields and correct the errors indicated below in red text.</strong></p></div>{% endif %}
+
+<form action="{% url 'tourny:event_add' %}" method="post">
+  {% csrf_token %}
+  <div class="errorWrapper">{{ form.non_field_errors }}</div>
+
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.name.errors }}</div>
+    <label for="id_name">Name:</label>
+    {{ form.name }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.event_type.errors }}</div>
+    <label for="id_name">Type:</label>
+    {{ form.event_type }}
+  </div>
+  <br>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.gender.errors }}</div>
+    <label for="id_name">Gender:</label>
+    {{ form.gender }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.age.errors }}</div>
+    <label for="id_name">Age:</label>
+    {{ form.age }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.experience.errors }}</div>
+    <label for="id_name">Experience:</label>
+    {{ form.experience }}
+  </div>
+  <p>For team events, you should also specify a team size:</p>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.team_size.errors }}</div>
+    <label for="id_name">Experience:</label>
+    {{ form.team_size }}
+  </div>
+  <br>
+  <div class="centered">
+    <input type="submit" value="Create">
+  </div>
+</form>
+
+<br>
+
+{% endblock %}

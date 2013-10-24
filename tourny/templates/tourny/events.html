@@ -7,7 +7,9 @@
 <p>This page allows you to create, modify and delete events.  You can also
   generate brackets and enter results from a finished event.</p>
 
+<p>Click <a href="{% url 'tourny:event_add' %}"><b>here</b></a> to add a new event.</p>
 {% if events %}
+<p>Currently created events:</p>
 <div class="centered">
 <form action="{% url 'tourny:event_delete' %}" method="post">
 {% csrf_token %}
