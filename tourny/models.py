@@ -120,6 +120,10 @@ class Person(models.Model):
     else:
       return 'Y'
 
+  def formatted_rank(self):
+    return self.rank + ' ' + self.kyu_or_dan
+
+
 class Team(models.Model):
   """A team of people that compete in an event."""
   
@@ -127,7 +131,11 @@ class Team(models.Model):
   members = models.ManyToManyField(Person)
 
   def __unicode__(self):
-    return self.name
+    return self.expanded_name()
+
+  def expanded_name(self):
+    teammates = '/'.join([c.name for c in self.members.all()])
+    return '%s (%s)' % (self.name, teammates)
 
 
 class Event(models.Model):
@@ -144,7 +152,7 @@ class Event(models.Model):
     ('B', 'Team Kata'),
     ('U', 'Kumite'),
     ('V', 'Team Kumite'),
-    ('B', 'Boston Battle'),
+    ('O', 'Boston Battle'),
   )
 
   AGE_CHOICES = (
@@ -162,6 +170,12 @@ class Event(models.Model):
     ('L', 'All'),
   )
 
+  EVENT_STATES_CHOICES = (
+    ('C', 'Created'),
+    ('O', 'Open'),
+    ('F', 'Finished'),
+  )
+
   # Basic event information.
   name = models.CharField(max_length=100)
   event_type = models.CharField(max_length=1, choices=EVENT_TYPE_CHOICES)
@@ -172,10 +186,32 @@ class Event(models.Model):
   age = models.CharField(max_length=1, choices=AGE_CHOICES)
   experience = models.CharField(max_length=1, choices=EXPERIENCE_CHOICES)
 
-  competitors = models.ManyToManyField(Person)
+  competitors = models.ManyToManyField(Person, blank=True, null=True)
 
   team_size = models.IntegerField(default=3)
-  teams = models.ManyToManyField(Team)
+  teams = models.ManyToManyField(Team, blank=True, null=True)
+
+  state = models.CharField(max_length=1, choices=EVENT_STATES_CHOICES,
+                           default='C')
 
   def __unicode__(self):
-    return self.name
+    if self.name == 'Default':
+      name = self.get_event_type_display()
+    else:
+      name = self.name + '::' + self.get_event_type_display()
+    if self.gender != 'B':
+      if name != '':
+        name += '::'
+      name += self.get_gender_display()
+    if self.experience != 'L':
+      if name != '':
+        name += '::'
+      name += self.get_experience_display()
+    if self.age != 'A':
+      if name != '':
+        name += '::'
+      name += self.get_age_display()
+    return name
+
+  def team_event(self):
+    return self.event_type in ['B', 'V', 'O']

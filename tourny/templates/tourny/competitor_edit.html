@@ -1,34 +1,16 @@
-{% extends "base.html" %}
-
-{% load staticfiles %}
+{% extends "tourny/base.html" %}
 
 {% block main %}
-<h1>Registration</h1>
 
-<h2>Overview</h2>
+<h2>Competitor Edit : {{ competitor.name }}</h2>
       
-<p>The registration tables will open at 11:30am on Saturday, October 26th,
-2013, and the the tournament will start at 12:00pm for the youth division
-and at 2:00pm for college age and older.  Boston Battle registration is allowed
-up until 2:00pm.</p>
-      
-<p>The $25 registration fee covers participation in any number of
-events for an individual.  For Youth families, it is $25 for the first
-child, but $40 total for a family with two or more youth
-participating. A $10 late fee is imposed for not registering before
-Sunday October 20th, or for registering at the door.</p>
-
-<p>Registration fees must be <b>paid in full</b> the day of the
-  competition by cash or check. Registration fees are
-  non-refundable.</p>
-
 {% if form.errors %}<div class="errorWrapper"><p><strong>Please fill in the missing fields and correct the errors indicated below in red text.</strong></p></div>{% endif %}
 
-<form action="{% url 'register' %}" method="post">
+<form action="{% url 'tourny:competitor_edit' competitor.pk %}" method="post">
   {% csrf_token %}
   <div class="errorWrapper">{{ form.non_field_errors }}</div>
 
-  <h2>Personal Information</h2>
+<p><b>General Information:</b></p>
   <div class="fieldWrapper">
     <div class="errorWrapper">{{ form.name.errors }}</div>
     <label for="id_first_name">Name:</label>
@@ -87,8 +69,6 @@ Sunday October 20th, or for registering at the door.</p>
     {{ form.college_age }} 
     <span>I am currently attending college.</span>
   </div>
-
-  <h2>Emergency Contact</h2>
   <div class="fieldWrapper">
     <div class="errorWrapper">{{ form.emergency_contact_name.errors }}</div>
     <label for="id_emergency_contact_name">Name:</label>
@@ -105,8 +85,6 @@ Sunday October 20th, or for registering at the door.</p>
     {{ form.emergency_contact_phone }}
     <span>(e.g. 123-456-7890)</span>
   </div>
-
-  <h2>Karate Experience</h2>
   <div class="fieldWrapper">
     <div class="errorWrapper">{{ form.rank.errors }}</div>
     <label for="id_rank">Rank:</label>
@@ -129,28 +107,17 @@ Sunday October 20th, or for registering at the door.</p>
     {{ form.school }} 
   </div>
 
-  <h2>Events</h2>
-  <div class="centered">
-    <table border="1" cellpadding="4">
-      <tr><th align="left">If you have been training</th><th align="left">Or your rank is</th><th align="left">Your division is</th></tr>
-      <tr><td>< 12 months</td><td>10th - 7th Kyu</td><td>Beginner</td></tr>
-      <tr><td>12 months - 2 years</td><td>6th - 4th Kyu</td><td>Intermediate</td></tr>
-      <tr><td>2 years +</td><td>3rd - 1st Kyu or a Dan rank</td><td>Advanced</td></tr>
-    </table>
-  </div>
-  <h4 style="text-align: left;">1. Individual Kata</h4>
+<p><b>Events:</b></p>
   <div class="fieldWrapper">
     <div class="errorWrapper">{{ form.kata.errors }}</div>
     <label for="id_kata">Kata:</label>
     {{ form.kata }} 
   </div>
-  <h4 style="text-align: left;">1. Individual Kumite</h4>
   <div class="fieldWrapper">
     <div class="errorWrapper">{{ form.kumite.errors }}</div>
     <label for="id_kata">Kumite:</label>
     {{ form.kumite }} 
   </div>
-  <h4 style="text-align: left;">3. Team Kumite (College age or above, only!)</h4>
   <div class="fieldWrapper">
     <div class="errorWrapper">{{ form.team_kumite.errors }}</div>
     <label style="width:100px">&nbsp;</label>
@@ -163,10 +130,6 @@ Sunday October 20th, or for registering at the door.</p>
     {{ form.team_kumite_team_name }} 
     <span>*</span>
   </div>
-  <p>* Teams of 3, please enter the same team name.  If your school
-    is sending multiple teams, please provide different names,
-    e.g. MIT A, MIT B</p>
-  <h4 style="text-align: left;">4. Boston Battle (College age or above, only!)</h4>
   <div class="fieldWrapper">
     <div class="errorWrapper">{{ form.boston_battle.errors }}</div>
     <label style="width:100px">&nbsp;</label>
@@ -183,16 +146,18 @@ Sunday October 20th, or for registering at the door.</p>
     <label for="id_kata">Partner Name:</label>
     {{ form.boston_battle_partner_name }} 
   </div>
-
-  <div><h2>Payment</h2></div>
-  <p>The preregistration fee for any number of events is $25, payable
-    in cash or check upon checking in at the door on the day of the
-    tournament, in addition to any late fees.  For Youth families, it
-    is $25 for the first child, but $40 total for a family with two or
-    more youth participating. Checks should be made out to NECKC.
-    Payment of registration fee will be required prior to
-    participation in any tournament events.</p>
-
-  <div class="centered"><input type="submit" value="Register"/></div>
+<p><b>Tournament State:</b></p>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.waiver.errors }}</div>
+    <label for="id_waiver">Waiver:</label>
+    {{ form.waiver }} 
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.paid.errors }}</div>
+    <label for="id_paid">Paid:</label>
+    {{ form.paid }} 
+  </div>
+  <div class="centered"><input type="submit" value="Submit"/></div>
 </form>
+<br>
 {% endblock %}

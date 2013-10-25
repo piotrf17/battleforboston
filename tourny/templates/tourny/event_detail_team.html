@@ -1,0 +1,166 @@
+{% extends "tourny/base.html" %}
+
+{% block main %}
+
+<h2>
+  Event Detail - {{ event }}
+</h2>
+
+{# ================================================================== #}
+{#                  Event has been created.                           #}
+{# ================================================================== #}
+{% if event.state == 'C' %}
+
+<p>The following teams are registered for this event:</p>
+<div class="centered">
+{% if teams %}
+  <table>
+    <tr>
+      <th>Team Name</th>
+      {% for i in team_size %}
+      <th>Competitor {{ i }}</th>
+      {% endfor %}
+    </tr>
+  {% for team_name, competitors in teams.items %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td>{{ team_name }}</td>
+      {% for competitor in competitors %}
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </table>
+  <br>
+{% else %}
+  <p class="error">No teams registered for this event.</p>
+{% endif %}
+</div>
+
+
+{% if bad_teams %}
+<p>The following teams are registered, but do not have the correct number of competitors:</p>
+<div class="centered">
+  <table>
+    <tr>
+      <th>Team Name</th>
+      {% for i in team_size %}
+      <th>Competitor {{ i }}</th>
+      {% endfor %}
+    </tr>
+  {% for team_name, competitors in bad_teams.items %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td>{{ team_name }}</td>
+      {% for competitor in competitors %}
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </table>
+</div>
+{% endif %}
+
+<p>If you are ready to start generating brackets for this event, click
+  <b><a href="{% url 'tourny:event_open_team' event.pk %}">here</a></b>.  Opening
+  the event will automatically add all teams into the event.  After opening,
+  you will also have the option of manually adding and removing teams.</p>
+
+{% else %}
+{# ================================================================== #}
+{#                  Event has been opened.                            #}
+{# ================================================================== #}
+{% if event.state == 'O' %}
+
+<p>The following teams are currently in this event:</p>
+<div class="centered">
+{% if teams %}
+<form action="{% url 'tourny:event_remove_teams' event.pk %}" method="post">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <th>Remove</th>
+      <th>Team Name</th>
+      {% for i in team_size %}
+      <th>Competitor {{ i }}</th>
+      {% endfor %}
+    </tr>
+  {% for team in teams %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td><input type="checkbox" name="remove" value="{{ team.pk }}"/></td>
+      <td>{{ team.name }}</td>
+      {% for competitor in team.members.all %}
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </table>
+  <br>
+  <input type="submit" value="Remove selected teams">
+</form>
+{% else %}
+  <p class="error">There are no teams currently in this event.</p>
+{% endif %}
+</div>
+
+<p>The following teams are registered for this event but not currently in:</p>
+<div class="centered">
+{% if good_teams %}
+<form action="{% url 'tourny:event_add_teams' event.pk %}" method="post">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <th>Add</th>
+      <th>Team Name</th>
+      {% for i in team_size %}
+      <th>Competitor {{ i }}</th>
+      {% endfor %}
+    </tr>
+  {% for team_name, competitors in good_teams.items %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td><input type="checkbox" name="add" value="{{ team_name }}"/></td>
+      <td>{{ team_name }}</td>
+      {% for competitor in competitors %}
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </table>
+  <br>
+  <input type="submit" value="Add selected teams">
+</form>
+{% else %}
+  <p class="error">No more teams registered.</p>
+{% endif %}
+</div>
+
+{% if bad_teams %}
+<p>The following teams are registered, but do not have the correct number of competitors:</p>
+<div class="centered">
+  <table>
+    <tr>
+      <th>Team Name</th>
+      {% for i in team_size %}
+      <th>Competitor {{ i }}</th>
+      {% endfor %}
+    </tr>
+  {% for team_name, competitors in bad_teams.items %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td>{{ team_name }}</td>
+      {% for competitor in competitors %}
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </table>
+</div>
+{% endif %}
+
+{% else %} 
+{# ================================================================== #}
+{#                  Event has finished.                               #}
+{# ================================================================== #}
+<p>The event is now finished.<p>
+
+{% endif %}
+{% endif %}
+
+{% endblock %}

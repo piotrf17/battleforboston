@@ -3,57 +3,215 @@
 {% block main %}
 
 <h2>
-  Event Detail - 
-
-  {{ event.name }}
-  ::
-  {% if event.event_type == 'A' %}Kata{% endif %}
-  {% if event.event_type == 'U' %}Kumite{% endif %}
-  {% if event.event_type == 'B' %}Boston Battle{% endif %}
-  ::
-  {% if event.gender == 'M' %}Male{% endif %}
-  {% if event.gender == 'F' %}Female{% endif %}
-  {% if event.gender == 'B' %}Both{% endif %}
-  ::
-  {% if event.age == 'Y' %}Youth{% endif %}
-  {% if event.age == 'C' %}College{% endif %}
-  {% if event.age == 'O' %}Older{% endif %}
-  {% if event.age == 'N' %}College & Older{% endif %}
-  {% if event.age == 'A' %}All{% endif %}
-  ::
-  {% if event.experience == 'B' %}Beginner{% endif %}
-  {% if event.experience == 'I' %}Intermediate{% endif %}
-  {% if event.experience == 'A' %}Advanced{% endif %}
-  {% if event.experience == 'L' %}All{% endif %}
+  Event Detail - {{ event }}
 </h2>
 
-<p>The following people are registered and checked in:</p>
-<table cellpadding="5">
-{% for competitor in competitors %}
-{% if competitor.paid and competitor.waiver %}
-  <tr>
-    <td>{{ competitor.name }}</td>
-    <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
-    <td>{{ competitor.years_training }}</td>
-    <td>{{ competitor.age }}y</td>
-  </tr>
-{% endif %}
-{% endfor %}
-</table>
+{# ================================================================== #}
+{#                  Event has been created.                           #}
+{# ================================================================== #}
+{% if event.state == 'C' %}
 
-<p>The following people are registered but not checked in:</p>
-<table cellpadding="5">
-{% for competitor in competitors %}
-{% if competitor.paid and competitor.waiver %}
+<p>The following people are preregistered for this event, and checked in:</p>
+<div class="centered">
+{% if competitors_prereg_check %}
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Rank</th>
+      <th>Years Training</th>
+      <th>School</th>
+      <th>Waiver?</th>
+      <th>Paid?</th>
+    </tr>
+  {% for competitor in competitors_prereg_check %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
+      <td>{{ competitor.gender }}</td>
+      <td>{{ competitor.age }}</td>
+      <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
+      <td>{{ competitor.years_training }}</td>
+      <td>{{ competitor.get_school_display }}</td>
+      <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
+      <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </table>
+  <br>
 {% else %}
-  <tr>
-    <td>{{ competitor.name }}</td>
-    <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
-    <td>{{ competitor.years_training }}</td>
-    <td>{{ competitor.age }}</td>
-  </tr>
+  <p class="error">No competitors currently checked in.</p>
 {% endif %}
-{% endfor %}
-</table>
+</div>
+
+<p>The following people are preregistered for this event, but not checked in:</p>
+<div class="centered">
+{% if competitors_prereg %}
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Rank</th>
+      <th>Years Training</th>
+      <th>School</th>
+      <th>Waiver?</th>
+      <th>Paid?</th>
+    </tr>
+  {% for competitor in competitors_prereg %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
+      <td>{{ competitor.gender }}</td>
+      <td>{{ competitor.age }}</td>
+      <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
+      <td>{{ competitor.years_training }}</td>
+      <td>{{ competitor.get_school_display }}</td>
+      <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
+      <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </table>
+  <br>
+{% else %}
+  <p class="error">No competitors currently preregistered.</p>
+{% endif %}
+</div>
+
+<p>If you are ready to start generating brackets for this event, click
+  <b><a href="{% url 'tourny:event_open' event.pk %}">here</a></b>.  Opening
+  the event will automatically add all people preregistered and checked in
+  into the event.  After opening, you will also have the option of manually
+  adding and removing competitors.</p>
+
+{% else %}
+{# ================================================================== #}
+{#                  Event has been opened.                            #}
+{# ================================================================== #}
+{% if event.state == 'O' %}
+<p>The following people are currently in this event:</p>
+<div class="centered">
+{% if event_competitors %}
+<form action="{% url 'tourny:event_remove_competitors' event.pk %}" method="post">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <th>Remove</th>
+      <th>Name</th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Rank</th>
+      <th>Years Training</th>
+      <th>School</th>
+      <th>Waiver?</th>
+      <th>Paid?</th>
+    </tr>
+  {% for competitor in event_competitors %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td><input type="checkbox" name="remove" value="{{ competitor.pk }}"/></td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
+      <td>{{ competitor.gender }}</td>
+      <td>{{ competitor.age }}</td>
+      <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
+      <td>{{ competitor.years_training }}</td>
+      <td>{{ competitor.get_school_display }}</td>
+      <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
+      <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </table>
+  <br>
+  <input type="submit" value="Remove selected people">
+</form>
+{% else %}
+<p class="error">No competitors currently in this event.</p>
+{% endif %}
+</div>
+
+<p>The following people are registered for this event but not currently in:</p>
+<div class="centered">
+{% if event_competitors_prereg %}
+<form action="{% url 'tourny:event_add_competitors' event.pk %}" method="post">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <th>Add</th>
+      <th>Name</th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Rank</th>
+      <th>Years Training</th>
+      <th>School</th>
+      <th>Waiver?</th>
+      <th>Paid?</th>
+    </tr>
+  {% for competitor in event_competitors_prereg %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td><input type="checkbox" name="add" value="{{ competitor.pk }}"/></td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
+      <td>{{ competitor.gender }}</td>
+      <td>{{ competitor.age }}</td>
+      <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
+      <td>{{ competitor.years_training }}</td>
+      <td>{{ competitor.get_school_display }}</td>
+      <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
+      <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </table>
+  <br>
+  <input type="submit" value="Add selected people">
+</form>
+{% else %}
+<p class="error">No more preregistered competitors.</p>
+{% endif %}
+</div>
+
+<p>All the other competitors are listed here.  These people are not registered for this event, but you can manually add people:</p>
+<div class="centered">
+{% if other_competitors %}
+<form action="{% url 'tourny:event_add_competitors' event.pk %}" method="post">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <th>Add</th>
+      <th>Name</th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Rank</th>
+      <th>Years Training</th>
+      <th>School</th>
+      <th>Waiver?</th>
+      <th>Paid?</th>
+    </tr>
+  {% for competitor in other_competitors %}
+    <tr class="{%cycle 'green' 'blue' %}">
+      <td><input type="checkbox" name="add" value="{{ competitor.pk }}"/></td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
+      <td>{{ competitor.gender }}</td>
+      <td>{{ competitor.age }}</td>
+      <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
+      <td>{{ competitor.years_training }}</td>
+      <td>{{ competitor.get_school_display }}</td>
+      <td>{% if competitor.waiver %}Y{% else %}N{% endif %}</td>
+      <td>{% if competitor.paid %}Y{% else %}N{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </table>
+  <br>
+  <input type="submit" value="Add selected people">
+</form>
+{% else %}
+<p class="error">No other competitors.</p>
+{% endif %}
+</div>
+
+{% else %} 
+{# ================================================================== #}
+{#                  Event has finished.                               #}
+{# ================================================================== #}
+<p>The event is now finished.<p>
+
+{% endif %}
+{% endif %}
 
 {% endblock %}

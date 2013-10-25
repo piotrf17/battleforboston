@@ -7,7 +7,7 @@
 <p>The following people are currently registered for the tournament.
 For further registration information (address, phone number, etc.) on
 a person, or to change any of their registration details, click on
-their row.</p>
+their name.</p>
 
 {% if competitors %}
   <table>
@@ -15,6 +15,7 @@ their row.</p>
       <th></th>
       <th>Name</th>
       <th>Email</th>
+      <th>Gen</th>
       <th>Age</th>
       <th>Kata</th>
       <th>Kumite</th>
@@ -26,8 +27,9 @@ their row.</p>
     {% for competitor in competitors %}
       <tr class="{%cycle 'green' 'blue' %}">
 	<td>{{ forloop.counter }}</td>
-        <td>{{ competitor.name }}</td>
+        <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
 	<td>{{ competitor.email }}</td>
+	<td>{{ competitor.gender }}</td>
 	<td>{{ competitor.age }}</td>
 	<td>
 	  {% if competitor.kata == 'A' %}Adv{% endif %}

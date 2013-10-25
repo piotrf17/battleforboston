@@ -4,3 +4,4 @@ South==0.8.2
 django-localflavor==1.0
 flup==1.0.2
 wsgiref==0.1.2
+reportlab==2.7

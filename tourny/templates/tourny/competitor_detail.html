@@ -1,0 +1,53 @@
+{% extends "tourny/base.html" %}
+
+{% block main %}
+
+<h2>Competitor Detail : {{ competitor.name }}</h2>
+
+<p><b>General Information:</b></p>
+<table class="indented">
+  <tr><td>Name:</td><td>{{ competitor.name }}</td>
+  <tr><td>Gender:</td><td>{{ competitor.get_gender_display }}</td>
+  <tr><td>Date of birth:</td><td>{{ competitor.dob }}</td>
+  <tr><td>In College?:</td><td>{{ competitor.college_age }}</td>
+  <tr><td>Email:</td><td>{{ competitor.email }}</td>
+  <tr><td>Phone:</td><td>{{ competitor.phone }}</td>
+  <tr><td>Address:</td><td>{{ competitor.address1 }}</td>
+  <tr><td></td><td>{{ competitor.address2 }}</td>
+  <tr><td>City:</td><td>{{ competitor.city }}</td>
+  <tr><td>State:</td><td>{{ competitor.state }}</td>
+  <tr><td>Zipcode:</td><td>{{ competitor.zipcode }}</td>
+  <tr><td>Emergency Contanct:</td><td>{{ competitor.emergency_contact_name }}</td>
+  <tr><td></td><td>{{ competitor.emergency_contact_relation }}</td>
+  <tr><td></td><td>{{ competitor.emergency_contact_phone }}</td>
+  <tr><td>Rank:</td><td>{{ competitor.formatted_rank }}</td>
+  <tr><td>Belt:</td><td>{{ competitor.belt_color }}</td>
+  <tr><td>Years Training:</td><td>{{ competitor.years_training }}</td>
+  <tr><td>School:</td><td>{{ competitor.get_school_display }}</td>
+</table>
+
+<p><b>Events:</b></p>
+<table class="indented">
+  <tr><td>Kata:</td><td>{{ competitor.get_kata_display }}</td>
+  <tr><td>Kumite:</td><td>{{ competitor.get_kumite_display }}</td>
+  <tr><td>Team Kumite:</td><td>{{ competitor.team_kumite }}</td>
+  <tr><td>Team Kumite Team:</td><td>{{ competitor.team_kumite_team_name }}</td>
+  <tr><td>Boston Battle:</td><td>{{ competitor.boston_battle }}</td>
+  <tr><td>Boston Battle Team:</td><td>{{ competitor.boston_battle_team_name }}</td>
+  <tr><td>Boston Battle Partner:</td><td>{{ competitor.boston_battle_partner_name }}</td>
+</table>
+
+<p><b>Tournament State:</b></p>
+<table class="indented">
+  <tr><td>Waiver:</td><td>{{ competitor.waiver }}</td>
+  <tr><td>Paid:</td><td>{{ competitor.paid }}</td>
+</table>
+
+<div class="centered">
+  <a href="{% url 'tourny:competitor_edit' competitor.pk %}">
+    <button type="button">Edit</button>
+  </a>
+</div>
+<br>
+
+{% endblock %}

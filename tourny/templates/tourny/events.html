@@ -7,8 +7,13 @@
 <p>This page allows you to create, modify and delete events.  You can also
   generate brackets and enter results from a finished event.</p>
 
+<p>Click <a href="{% url 'tourny:event_add' %}"><b>here</b></a> to add a new event.</p>
 {% if events %}
-<table cellpadding="5" border="1">
+<p>Currently created events:</p>
+<div class="centered">
+<form action="{% url 'tourny:event_delete' %}" method="post">
+{% csrf_token %}
+<table cellpadding="5">
   <tr>
     <th>Delete</th>
     <th>Name</th>
@@ -18,36 +23,30 @@
     <th>Experience</th>
   </tr>
   {% for event in events %}
-  <tr>
+  <tr class="{%cycle 'green' 'blue' %}">
     <td><input type="checkbox" name="delete" value="{{ event.pk }}"/></td>
     <td>{{ event.name }}</td>
+    <td>{{ event.get_event_type_display }}</td>
+    <td>{{ event.get_gender_display }}</td>
+    <td>{{ event.get_age_display }}</td>
+    <td>{{ event.get_experience_display }}</td>
     <td>
-      {% if event.event_type == 'A' %}Kata{% endif %}
-      {% if event.event_type == 'U' %}Kumite{% endif %}
-      {% if event.event_type == 'B' %}Boston Battle{% endif %}
+      {% if event.team_event %}
+      <a href="{% url 'tourny:event_detail_team' event.pk %}">Teams</a>
+      {% else %}
+      <a href="{% url 'tourny:event_detail' event.pk %}">Competitors</a>
+      {% endif %}
     </td>
-    <td>
-      {% if event.gender == 'M' %}Male{% endif %}
-      {% if event.gender == 'F' %}Female{% endif %}
-      {% if event.gender == 'B' %}Both{% endif %}
-    </td>
-    <td>
-      {% if event.age == 'Y' %}Youth{% endif %}
-      {% if event.age == 'C' %}College{% endif %}
-      {% if event.age == 'O' %}Older{% endif %}
-      {% if event.age == 'N' %}College & Older{% endif %}
-      {% if event.age == 'A' %}All{% endif %}
-    </td>
-    <td>
-      {% if event.experience == 'B' %}Beginner{% endif %}
-      {% if event.experience == 'I' %}Intermediate{% endif %}
-      {% if event.experience == 'A' %}Advanced{% endif %}
-      {% if event.experience == 'L' %}All{% endif %}
-    </td>
-    <td><a href="{% url 'tourny:event_detail' event.pk %}">Edit</a></td>
+    {% if event.state == 'O' %}
+    <td><a href="{% url 'tourny:event_bracket' event.pk %}">Bracket</a></td>
+    {% endif %}
   </tr>
   {% endfor %}
 </table>
+<br>
+<input type="submit" value="Delete selected events"/>
+</form>
+</div>
 {% else %}
 <p><span class="error">No events created yet.</span>  To generate the default set of events, please click <a href="{% url 'tourny:generate_default_events' %}">here</a>.</p>
 {% endif %}
