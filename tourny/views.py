@@ -95,7 +95,7 @@ def accept_payment(request):
   if 'amount' in request.POST:
     form = PaymentForm(request.POST)
     if form.is_valid():
-      p = Payment(amount=form.cleaned_data['amount'])
+      p = m.Payment(amount=form.cleaned_data['amount'])
       p.save()
       for competitor in competitors:
         p.person_set.add(competitor)
