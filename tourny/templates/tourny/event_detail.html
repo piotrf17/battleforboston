@@ -27,7 +27,7 @@
     </tr>
   {% for competitor in competitors_prereg_check %}
     <tr class="{%cycle 'green' 'blue' %}">
-      <td>{{ competitor.name }}</td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
       <td>{{ competitor.gender }}</td>
       <td>{{ competitor.age }}</td>
       <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
@@ -60,7 +60,7 @@
     </tr>
   {% for competitor in competitors_prereg %}
     <tr class="{%cycle 'green' 'blue' %}">
-      <td>{{ competitor.name }}</td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
       <td>{{ competitor.gender }}</td>
       <td>{{ competitor.age }}</td>
       <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
@@ -108,7 +108,7 @@
   {% for competitor in event_competitors %}
     <tr class="{%cycle 'green' 'blue' %}">
       <td><input type="checkbox" name="remove" value="{{ competitor.pk }}"/></td>
-      <td>{{ competitor.name }}</td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
       <td>{{ competitor.gender }}</td>
       <td>{{ competitor.age }}</td>
       <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
@@ -147,7 +147,7 @@
   {% for competitor in event_competitors_prereg %}
     <tr class="{%cycle 'green' 'blue' %}">
       <td><input type="checkbox" name="add" value="{{ competitor.pk }}"/></td>
-      <td>{{ competitor.name }}</td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
       <td>{{ competitor.gender }}</td>
       <td>{{ competitor.age }}</td>
       <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>
@@ -186,7 +186,7 @@
   {% for competitor in other_competitors %}
     <tr class="{%cycle 'green' 'blue' %}">
       <td><input type="checkbox" name="add" value="{{ competitor.pk }}"/></td>
-      <td>{{ competitor.name }}</td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
       <td>{{ competitor.gender }}</td>
       <td>{{ competitor.age }}</td>
       <td>{{ competitor.rank }} {{ competitor.kyu_or_dan }}</td>

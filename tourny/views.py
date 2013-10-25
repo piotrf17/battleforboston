@@ -135,13 +135,25 @@ def competitor_list(request):
 
 
 @login_required
-def competitor_detail(request):
-  pass
+def competitor_detail(request, person_id):
+  competitor = get_object_or_404(m.Person, pk=person_id)
+  context = {'competitor' : competitor}
+  return render(request, 'tourny/competitor_detail.html', context)
 
 
 @login_required
-def competitor_edit(request):
-  pass
+def competitor_edit(request, person_id):
+  competitor = get_object_or_404(m.Person, pk=person_id)
+  if request.method == 'POST':
+    form = PersonForm(request.POST, instance=competitor)
+    if form.is_valid():
+      person = form.save()
+      return HttpResponseRedirect('../%s' % person_id)
+  else:
+    form = PersonForm(instance=competitor)
+  context = {'form' : form,
+             'competitor' : competitor}
+  return render(request, 'tourny/competitor_edit.html', context)
 
 
 @login_required

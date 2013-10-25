@@ -1,0 +1,163 @@
+{% extends "tourny/base.html" %}
+
+{% block main %}
+
+<h2>Competitor Edit : {{ competitor.name }}</h2>
+      
+{% if form.errors %}<div class="errorWrapper"><p><strong>Please fill in the missing fields and correct the errors indicated below in red text.</strong></p></div>{% endif %}
+
+<form action="{% url 'tourny:competitor_edit' competitor.pk %}" method="post">
+  {% csrf_token %}
+  <div class="errorWrapper">{{ form.non_field_errors }}</div>
+
+<p><b>General Information:</b></p>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.name.errors }}</div>
+    <label for="id_first_name">Name:</label>
+    {{ form.name }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.gender.errors }}</div>
+    <label for="id_gender">Gender:</label>
+    {{ form.gender }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.dob.errors }}</div>
+    <label for="id_dob">Date of Birth:</label>
+    {{ form.dob }}
+    <span>(Enter as mm/dd/yyyy, e.g. 02/22/1982)</span>
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.email.errors }}</div>
+    <label for="id_email">Email:</label>
+    {{ form.email }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.phone.errors }}</div>
+    <label for="id_phone">Phone:</label>
+    {{ form.phone }}
+    <span>(e.g. 123-456-7890)</span>
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.address1.errors }}</div>
+    <label for="id_address1">Address:</label>
+    {{ form.address1 }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.address2.errors }}</div>
+    <label for="id_address2">&nbsp;</label>
+    {{ form.address2 }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.city.errors }}</div>
+    <label for="id_city">City:</label>
+    {{ form.city }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.state.errors }}</div>
+    <label for="id_state">State:</label>
+    {{ form.state }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.zipcode.errors }}</div>
+    <label for="id_zipcode">Zipcode:</label>
+    {{ form.zipcode }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.college_age.errors }}</div>
+    <label style="width:100px">&nbsp;</label>
+    {{ form.college_age }} 
+    <span>I am currently attending college.</span>
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.emergency_contact_name.errors }}</div>
+    <label for="id_emergency_contact_name">Name:</label>
+    {{ form.emergency_contact_name }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.emergency_contact_relation.errors }}</div>
+    <label for="id_emergency_contact_relation">Relation:</label>
+    {{ form.emergency_contact_relation }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.emergency_contact_phone.errors }}</div>
+    <label for="id_emergency_contact_phone">Phone:</label>
+    {{ form.emergency_contact_phone }}
+    <span>(e.g. 123-456-7890)</span>
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.rank.errors }}</div>
+    <label for="id_rank">Rank:</label>
+    {{ form.rank }}
+    {{ form.kyu_or_dan }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.belt_color.errors }}</div>
+    <label for="id_belt_color">Belt Color:</label>
+    {{ form.belt_color }}
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.years_training.errors }}</div>
+    <label for="id_belt_color">Years Training:</label>
+    {{ form.years_training }} 
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.school.errors }}</div>
+    <label for="id_school">School:</label>
+    {{ form.school }} 
+  </div>
+
+<p><b>Events:</b></p>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.kata.errors }}</div>
+    <label for="id_kata">Kata:</label>
+    {{ form.kata }} 
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.kumite.errors }}</div>
+    <label for="id_kata">Kumite:</label>
+    {{ form.kumite }} 
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.team_kumite.errors }}</div>
+    <label style="width:100px">&nbsp;</label>
+    {{ form.team_kumite }} 
+    <span>I would like to participate in Team Kumite</span>
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.team_kumite_team_name.errors }}</div>
+    <label for="id_team_kumite_team_name">Team Name</label>
+    {{ form.team_kumite_team_name }} 
+    <span>*</span>
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.boston_battle.errors }}</div>
+    <label style="width:100px">&nbsp;</label>
+    {{ form.boston_battle }} 
+    <span>I would like to participate in Team Kumite</span>
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.boston_battle_team_name.errors }}</div>
+    <label for="id_kata">Team Name:</label>
+    {{ form.boston_battle_team_name }} 
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.boston_battle_partner_name.errors }}</div>
+    <label for="id_kata">Partner Name:</label>
+    {{ form.boston_battle_partner_name }} 
+  </div>
+<p><b>Tournament State:</b></p>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.waiver.errors }}</div>
+    <label for="id_waiver">Waiver:</label>
+    {{ form.waiver }} 
+  </div>
+  <div class="fieldWrapper">
+    <div class="errorWrapper">{{ form.paid.errors }}</div>
+    <label for="id_paid">Paid:</label>
+    {{ form.paid }} 
+  </div>
+  <div class="centered"><input type="submit" value="Submit"/></div>
+</form>
+<br>
+{% endblock %}

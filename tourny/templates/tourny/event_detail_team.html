@@ -25,7 +25,7 @@
     <tr class="{%cycle 'green' 'blue' %}">
       <td>{{ team_name }}</td>
       {% for competitor in competitors %}
-      <td>{{ competitor.name }}</td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
       {% endfor %}
     </tr>
   {% endfor %}
@@ -51,7 +51,7 @@
     <tr class="{%cycle 'green' 'blue' %}">
       <td>{{ team_name }}</td>
       {% for competitor in competitors %}
-      <td>{{ competitor.name }}</td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
       {% endfor %}
     </tr>
   {% endfor %}
@@ -88,7 +88,7 @@
       <td><input type="checkbox" name="remove" value="{{ team.pk }}"/></td>
       <td>{{ team.name }}</td>
       {% for competitor in team.members.all %}
-      <td>{{ competitor.name }}</td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
       {% endfor %}
     </tr>
   {% endfor %}
@@ -119,7 +119,7 @@
       <td><input type="checkbox" name="add" value="{{ team_name }}"/></td>
       <td>{{ team_name }}</td>
       {% for competitor in competitors %}
-      <td>{{ competitor.name }}</td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
       {% endfor %}
     </tr>
   {% endfor %}
@@ -146,7 +146,7 @@
     <tr class="{%cycle 'green' 'blue' %}">
       <td>{{ team_name }}</td>
       {% for competitor in competitors %}
-      <td>{{ competitor.name }}</td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
       {% endfor %}
     </tr>
   {% endfor %}

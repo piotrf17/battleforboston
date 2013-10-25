@@ -28,7 +28,7 @@ and print off a receipt.</p>
     <tr class="{%cycle 'green' 'blue' %}">
       <td><input type="checkbox" name="waiver" value="{{ competitor.pk }}" {% if competitor.waiver %}checked disabled{% endif %}/></td>
       <td><input type="checkbox" name="paid" value="{{ competitor.pk }}" {% if competitor.paid %}checked disabled{% endif %}/></td>
-      <td>{{ competitor.name }}</td>
+      <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
       <td>{{ competitor.email }}</td>
       <td>{{ competitor.age }}</td>
       <td>
