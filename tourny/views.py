@@ -1,6 +1,7 @@
 # Views for the tourny app.
 
 import collections
+import csv
 
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -133,6 +134,21 @@ def competitor_list(request):
   context = {'competitors' : competitors}
   return render(request, 'tourny/competitors.html', context)
 
+
+@login_required
+def competitor_csv(request):
+  """Most important competitor data in a csv."""
+  competitors = m.Person.objects.all()
+
+  response = HttpResponse(content_type='text/csv')
+  response['Content-Disposition'] = 'attachment; filename="competitors.csv"'
+
+  writer = csv.writer(response)
+  writer.writerow(['Name', 'Email', 'Phone'])
+  for competitor in competitors:
+    writer.writerow([competitor.name, competitor.email, competitor.phone])
+
+  return response
 
 @login_required
 def competitor_detail(request, person_id):

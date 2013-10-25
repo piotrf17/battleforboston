@@ -6,6 +6,7 @@ urlpatterns = patterns('',
   # Competitor management.
   url(r'^$', views.competitor_list, name='competitor_list'),
   url(r'^competitors$', views.competitor_list, name='competitor_list'),
+  url(r'^competitors_csv$', views.competitor_csv, name='competitor_csv'),
   url(r'^competitors/(?P<person_id>\d+)$', views.competitor_detail,
       name='competitor_detail'),
   url(r'^competitors/(?P<person_id>\d+)/edit$', views.competitor_edit,
