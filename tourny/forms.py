@@ -59,3 +59,5 @@ class EventForm(ModelForm):
     team_size = cleaned_data.get('team_size')
     if event_type == 'O' and team_size != 2:
       raise ValidationError('Boston battle has 2 person teams!')
+
+    return cleaned_data
