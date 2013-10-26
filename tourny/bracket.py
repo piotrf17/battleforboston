@@ -12,7 +12,7 @@ from reportlab.lib.units import inch # create variable with 1 inch in points
 
 ##################
 # generate a pdf file of a bracket given a seeded list of competitor names
-def generate_bracket(response, title, footnote, competitor_names):
+def generate_bracket(response, title, footnote, competitor_names, actual_competitor_len):
   titlefontsize = 24
   footnotefontsize = 10
   bodyfontsize = 10
@@ -58,7 +58,7 @@ def generate_bracket(response, title, footnote, competitor_names):
 
   # Build Header
   pdf.setFont("Helvetica", titlefontsize) # Set the font and size.
-  pdf.drawCentredString(.5 * width, height - 0.5 * inch - titlefontsize, title + " - " + str(competitor_number) + " competitors.")
+  pdf.drawCentredString(.5 * width, height - 0.5 * inch - titlefontsize, title + " - " + str(actual_competitor_len) + " competitors.")
 
   # Build Footer
   pdf.setFont("Helvetica", footnotefontsize) # Set the font and size.

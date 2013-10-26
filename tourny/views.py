@@ -441,7 +441,8 @@ def event_bracket(request, event_id):
     ordered_competitors = bracket.seed_bracket(competitors)
     bracket.generate_bracket(response, unicode(event),
                              '2013 - Battle for Boston - NECKC/NAKF',
-                             ordered_competitors)
+                             ordered_competitors,
+                             len(competitors))
     return response
   elif event.event_type == 'A':
     listing.listing(response, unicode(event), competitors)
@@ -470,6 +471,7 @@ def event_winners(request, event_id):
                                     request.POST['third'])
     event.state = 'F'
     event.save()
+    return HttpResponseRedirect('../../events')
   if event.winners:
     winners = [int(x) for x in event.winners.split(',')]
     winners.extend([-1] * (3 - len(winners)))

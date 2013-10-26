@@ -4,8 +4,7 @@
 
 <h2>Events</h2>
 
-<p>This page allows you to create, modify and delete events.  You can also
-  generate brackets and enter results from a finished event.</p>
+<p>This page allows you to create, modify and delete events.  To create an event, use the link in the next paragraph.  To modify an event, click on "Competitors" or "Teams" to change the event roster.  You cannot change properties of an event like divison, age, etc. - instead, simply create a new event with the properties you want.  To open an event and generate a bracket, follow the link from the Competitors/Teams link.  Once the event is finished, follow the "Winners" link to enter winners.  Note that after you enter the winners of an event, you will no longer be able to change the roster.</p>
 
 <p>Click <a href="{% url 'tourny:event_add' %}"><b>here</b></a> to add a new event.</p>
 {% if events %}
@@ -44,7 +43,7 @@
     <td><a href="{% url 'tourny:event_winners' event.pk %}">Winners</a></td>
     {% endif %}
     {% if event.state == 'F' %}
-    <td></td>
+    <td><a href="{% url 'tourny:event_bracket' event.pk %}">Bracket</a></td>
     <td><a href="{% url 'tourny:event_winners' event.pk %}">Winners</a></td>
     {% endif %}
   </tr>
