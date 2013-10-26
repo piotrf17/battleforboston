@@ -2,6 +2,7 @@
 
 import collections
 import csv
+import sys
 
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -172,13 +173,44 @@ def competitor_detail(request, person_id):
   return render(request, 'tourny/competitor_detail.html', context)
 
 
+def update_competitor_team(competitor, event_type, original_team, new_team):
+  """Handle changing a team the competitor belongs to.
+
+  Currently, the only UI for setting a person's team is by changing the
+  name.  So, we need to go through any Team objects with a matching name
+  and event type and remove/add this person.
+  """
+  # First, see if we belonged to a team with the old name.
+  for team in competitor.team_set.filter(name=original_team):
+    if team.event().event_type == event_type:
+      team.members.remove(competitor)
+      if team.members.count() == 0:
+        team.delete()
+  # Next, see if we're joining an existing team with the new name.
+  for team in m.Team.objects.filter(name=new_team):
+    if team.event().event_type == event_type:
+      team.members.add(competitor)
+      team.save()
+
+
 @login_required
 def competitor_edit(request, person_id):
   competitor = get_object_or_404(m.Person, pk=person_id)
+  original_team_kumite = competitor.team_kumite_team_name
+  original_bbattle = competitor.boston_battle_team_name
   if request.method == 'POST':
     form = PersonForm(request.POST, instance=competitor)
     if form.is_valid():
-      person = form.save()
+      competitor = form.save()
+      # If we've changed or removed team names, need to update the team.
+      if competitor.team_kumite_team_name != original_team_kumite:
+        update_competitor_team(competitor, 'V',
+                               original_team_kumite,
+                               competitor.team_kumite_team_name)
+      if competitor.boston_battle_team_name != original_bbattle:
+        update_competitor_team(competitor, 'O',
+                               original_bbattle,
+                               competitor.boston_battle_team_name)
       return HttpResponseRedirect('../%s' % person_id)
   else:
     form = PersonForm(instance=competitor)
@@ -217,7 +249,10 @@ def event_delete(request):
   """Delete a set of events."""
   if request.method == 'POST':
     for pk in request.POST.getlist('delete'):
-      m.Event.objects.get(pk=pk).delete()
+      event = m.Event.objects.get(pk=pk)
+      for team in event.teams.all():
+        team.delete()
+      event.delete()
   return HttpResponseRedirect('../events')
 
 
