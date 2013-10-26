@@ -6,7 +6,18 @@
 
 <ul>
 {% for payment in payments %}
-  <li><a href="{% url 'tourny:payment_detail' payment.pk %}">Amount: ${{ payment.amount }}</a></li>
+  <li>
+    <a href="{% url 'tourny:payment_detail' payment.pk %}">Amount: ${{ payment.amount }}</a>
+    {% if payment.person_set.all|length == 1 %}
+      ({{ payment.person_set.all.0.name }})
+    {% endif %}
+    {% if payment.person_set.all|length == 2 %}
+      ({{ payment.person_set.all.0.name }}, {{ payment.person_set.all.1.name }})
+    {% endif %}
+    {% if payment.person_set.all|length > 2 %}
+      ({{ payment.person_set.all.0.name }}, {{ payment.person_set.all.1.name }}, ...)
+    {% endif %}
+  </li>
 {% endfor %}
 <ul>
 

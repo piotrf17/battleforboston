@@ -1,0 +1,59 @@
+{% extends "tourny/base.html" %}
+
+{% block main %}
+
+<h2>Event Winners - {{ event }}</h2>
+
+{% if event.state == 'O' %}
+<p>If the event is complete, here you can enter the winners.  Once you
+click "Save", the event will be closed and you will not be able to
+access the bracket or make any changes.</p>
+{% else %}
+<p>The event has finished and you've entered winners.  Click
+  {% if event.event_type == 'A' or event.event_type == 'U' %}
+  <a href="{% url 'tourny:event_reset' event.pk %}">here</a> 
+  {% else %}
+  <a href="{% url 'tourny:event_reset_team' event.pk %}">here</a> 
+  {% endif %}
+  to reset the event.  Note that this will clear any winners of the event and
+  move it back to a just created state.</p>
+{% endif %}
+
+<form action="{% url 'tourny:event_winners' event.pk %}" method="post">
+  {% csrf_token %}
+  <div class="fieldWrapper">
+    <label for="id_first">First Place:</label>
+    <select name="first">
+      {% for competitor in competitors %}
+      <option value="{{ competitor.pk }}" {% if competitor.pk == winners.0 %}selected{% endif %}>{{ competitor.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% if competitors|length > 1 %}
+  <div class="fieldWrapper">
+    <label for="id_second">Second Place:</label>
+    <select name="second">
+      {% for competitor in competitors %}
+      <option value="{{ competitor.pk }}" {% if competitor.pk == winners.1 %}selected{% endif %}>{{ competitor.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+  {% if competitors|length > 2 %}
+  <div class="fieldWrapper">
+    <label for="id_third">Third Place:</label>
+    <select name="third">
+      {% for competitor in competitors %}
+      <option value="{{ competitor.pk }}" {% if competitor.pk == winners.2 %}selected{% endif %}>{{ competitor.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+  <div class="centered">
+    <input type="submit" value="Save">
+  </div>
+</form>
+
+<br>
+
+{% endblock %}

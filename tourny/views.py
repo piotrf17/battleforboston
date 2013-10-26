@@ -2,6 +2,7 @@
 
 import collections
 import csv
+import sys
 
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -11,7 +12,7 @@ from django.template.loader import get_template
 from django.template import Context
 
 from tourny import models as m
-from tourny import bracket, listing
+from tourny import bracket, listing, receipt
 from tourny.forms import PersonForm, PaymentForm, EventForm
 
 ###################################################################
@@ -128,6 +129,22 @@ def payment_detail(request, payment_id):
 
 
 @login_required
+def payment_receipt(request, payment_id):
+  payment = get_object_or_404(m.Payment, pk=payment_id)
+  people = payment.person_set.all()
+
+  # Generate a pdf response.
+  filename = 'receipt-%s.pdf' % payment_id
+  response = HttpResponse(content_type="application/pdf")
+  response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
+  # TODO(piotrf): don't hardcode payment amount
+  receipt.receipt(response, people, 25, payment.amount)
+
+  return response
+
+
+@login_required
 def competitor_list(request):
   """Summarized view of competitors."""
   competitors = m.Person.objects.all()
@@ -157,13 +174,44 @@ def competitor_detail(request, person_id):
   return render(request, 'tourny/competitor_detail.html', context)
 
 
+def update_competitor_team(competitor, event_type, original_team, new_team):
+  """Handle changing a team the competitor belongs to.
+
+  Currently, the only UI for setting a person's team is by changing the
+  name.  So, we need to go through any Team objects with a matching name
+  and event type and remove/add this person.
+  """
+  # First, see if we belonged to a team with the old name.
+  for team in competitor.team_set.filter(name=original_team):
+    if team.event().event_type == event_type:
+      team.members.remove(competitor)
+      if team.members.count() == 0:
+        team.delete()
+  # Next, see if we're joining an existing team with the new name.
+  for team in m.Team.objects.filter(name=new_team):
+    if team.event().event_type == event_type:
+      team.members.add(competitor)
+      team.save()
+
+
 @login_required
 def competitor_edit(request, person_id):
   competitor = get_object_or_404(m.Person, pk=person_id)
+  original_team_kumite = competitor.team_kumite_team_name
+  original_bbattle = competitor.boston_battle_team_name
   if request.method == 'POST':
     form = PersonForm(request.POST, instance=competitor)
     if form.is_valid():
-      person = form.save()
+      competitor = form.save()
+      # If we've changed or removed team names, need to update the team.
+      if competitor.team_kumite_team_name != original_team_kumite:
+        update_competitor_team(competitor, 'V',
+                               original_team_kumite,
+                               competitor.team_kumite_team_name)
+      if competitor.boston_battle_team_name != original_bbattle:
+        update_competitor_team(competitor, 'O',
+                               original_bbattle,
+                               competitor.boston_battle_team_name)
       return HttpResponseRedirect('../%s' % person_id)
   else:
     form = PersonForm(instance=competitor)
@@ -202,7 +250,10 @@ def event_delete(request):
   """Delete a set of events."""
   if request.method == 'POST':
     for pk in request.POST.getlist('delete'):
-      m.Event.objects.get(pk=pk).delete()
+      event = m.Event.objects.get(pk=pk)
+      for team in event.teams.all():
+        team.delete()
+      event.delete()
   return HttpResponseRedirect('../events')
 
 
@@ -308,7 +359,7 @@ def event_detail(request, event_id):
                'event_competitors_prereg' : event_competitors_prereg,
                'other_competitors' : other_competitors}
     return render(request, 'tourny/event_detail.html', context)
-
+    
 
 @login_required
 def event_open(request, event_id):
@@ -318,6 +369,17 @@ def event_open(request, event_id):
     for competitor in get_preregistered_for_event(event):
       if competitor.paid and competitor.waiver:
         event.competitors.add(competitor)
+    event.save()
+  return HttpResponseRedirect('../%s' % event_id)
+
+
+@login_required
+def event_reset(request, event_id):
+  event = get_object_or_404(m.Event, pk=event_id)
+  if event.state in ['O', 'F']:
+    event.competitors.clear()
+    event.state = 'C'
+    event.winners = ''
     event.save()
   return HttpResponseRedirect('../%s' % event_id)
 
@@ -348,8 +410,9 @@ def event_bracket(request, event_id):
   event = get_object_or_404(m.Event, pk=event_id)
 
   # Generate a pdf response.
+  filename = 'bracket-%s.pdf' % event_id
   response = HttpResponse(content_type="application/pdf")
-  response['Content-Disposition'] = 'attachment; filename="bracket.pdf"'
+  response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
   # Gather competitors or teams
   Competitor = collections.namedtuple('Competitor', 'name rank experience school')
@@ -378,13 +441,46 @@ def event_bracket(request, event_id):
     ordered_competitors = bracket.seed_bracket(competitors)
     bracket.generate_bracket(response, unicode(event),
                              '2013 - Battle for Boston - NECKC/NAKF',
-                             ordered_competitors)
+                             ordered_competitors,
+                             len(competitors))
     return response
   elif event.event_type == 'A':
     listing.listing(response, unicode(event), competitors)
     return response
                                     
   return HttpResponseRedirect('../../events')
+
+
+@login_required
+def event_winners(request, event_id):
+  """A place to enter the winners of the event."""
+  event = get_object_or_404(m.Event, pk=event_id)
+  if event.event_type in ['A', 'U']:
+    competitors = event.competitors.all()
+  else:
+    competitors = event.teams.all()
+  if request.method == 'POST':
+    if len(competitors) == 1:
+      event.winners = request.POST['first']
+    elif len(competitors) == 2:
+      event.winners = '%s,%s' % (request.POST['first'],
+                                 request.POST['second'])
+    else:
+      event.winners = '%s,%s,%s' % (request.POST['first'],
+                                    request.POST['second'],
+                                    request.POST['third'])
+    event.state = 'F'
+    event.save()
+    return HttpResponseRedirect('../../events')
+  if event.winners:
+    winners = [int(x) for x in event.winners.split(',')]
+    winners.extend([-1] * (3 - len(winners)))
+  else:
+    winners = [-1,-1,-1]
+  context = {'event' : event,
+             'winners' : winners,
+             'competitors' : competitors}
+  return render(request, 'tourny/event_winners.html', context)
 
 
 def get_preregistered_teams_for_event(event):
@@ -447,15 +543,15 @@ def event_detail_team(request, event_id):
     good_teams = {}
     bad_teams = {}
     for teamname, competitors in prereg_teams.iteritems():
-      if len(competitors) == event.team_size:
-        team_exists = False
-        for team in event.teams.all():
-          if team.name == teamname:
-            team_exists = True
-        if not team_exists:
+      team_exists = False
+      for team in event.teams.all():
+        if team.name == teamname:
+          team_exists = True
+      if not team_exists:
+        if len(competitors) == event.team_size:
           good_teams[teamname] = competitors
-      else:
-        bad_teams[teamname] = competitors
+        else:
+          bad_teams[teamname] = competitors
     context = {'event' : event,
                'team_size' : range(1, event.team_size + 1),
                'teams' : event.teams.all(),
@@ -484,6 +580,19 @@ def event_open_team(request, event_id):
 
 
 @login_required
+def event_reset_team(request, event_id):
+  event = get_object_or_404(m.Event, pk=event_id)
+  if event.state in ['O', 'F']:
+    event.state = 'C'
+    for team in event.teams.all():
+      m.Team.objects.get(pk=team.pk).delete()
+    event.teams.clear()
+    event.winners = ''
+    event.save()
+  return HttpResponseRedirect('../%s' % event_id)
+
+
+@login_required
 def event_add_teams(request, event_id):
   """Add teams to a given event."""
   event = get_object_or_404(m.Event, pk=event_id)
@@ -491,12 +600,11 @@ def event_add_teams(request, event_id):
     teams = get_preregistered_teams_for_event(event)
     for teamname in request.POST.getlist('add'):
       if teamname in teams:
-        if len(teams[teamname]) == event.team_size:
-          team = m.Team.objects.create(name=teamname)
-          for competitor in teams[teamname]:
-            team.members.add(competitor)
-          team.save()
-          event.teams.add(team)
+        team = m.Team.objects.create(name=teamname)
+        for competitor in teams[teamname]:
+          team.members.add(competitor)
+        team.save()
+        event.teams.add(team)
     event.save()
   return HttpResponseRedirect('../%s' % event_id)
 

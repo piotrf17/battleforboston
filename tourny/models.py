@@ -137,6 +137,14 @@ class Team(models.Model):
     teammates = '/'.join([c.name for c in self.members.all()])
     return '%s (%s)' % (self.name, teammates)
 
+  # TODO(piotrf): don't use a ManyToManyField from Event to Team
+  def event(self):
+    """Get the event this team is in.
+
+    Note: this function will explode spectacularly if there are bugs in
+    team/event handling."""
+    return self.event_set.all()[0]
+
 
 class Event(models.Model):
   """An event that competitors/teams can participate in."""
@@ -193,6 +201,10 @@ class Event(models.Model):
 
   state = models.CharField(max_length=1, choices=EVENT_STATES_CHOICES,
                            default='C')
+
+  # The ids of the event winners are encoded in this string, comma
+  # separated.  This is almost certainly not a good way to do this.
+  winners = models.CharField(max_length=100, blank=True, null=True)
 
   def __unicode__(self):
     if self.name == 'Default':

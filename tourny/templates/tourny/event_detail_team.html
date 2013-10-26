@@ -70,6 +70,13 @@
 {# ================================================================== #}
 {% if event.state == 'O' %}
 
+<p>The event is now open.  You can generate a bracket from the link on the
+  main events page, or just by clicking
+  <a href="{% url 'tourny:event_bracket' event.pk %}">here</a>.
+  If you've opened this event by accident, or you want to go back to the original
+  roster you can always reset the event by clicking
+  <a href="{% url 'tourny:event_reset_team' event.pk %}">here</a>.
+
 <p>The following teams are currently in this event:</p>
 <div class="centered">
 {% if teams %}
@@ -135,8 +142,11 @@
 {% if bad_teams %}
 <p>The following teams are registered, but do not have the correct number of competitors:</p>
 <div class="centered">
+<form action="{% url 'tourny:event_add_teams' event.pk %}" method="post">
+  {% csrf_token %}
   <table>
     <tr>
+      <th>Add</th>
       <th>Team Name</th>
       {% for i in team_size %}
       <th>Competitor {{ i }}</th>
@@ -144,6 +154,7 @@
     </tr>
   {% for team_name, competitors in bad_teams.items %}
     <tr class="{%cycle 'green' 'blue' %}">
+      <td><input type="checkbox" name="add" value="{{ team_name }}"/></td>
       <td>{{ team_name }}</td>
       {% for competitor in competitors %}
       <td><a href="{% url 'tourny:competitor_detail' competitor.pk %}">{{ competitor.name }}</a></td>
@@ -151,6 +162,9 @@
     </tr>
   {% endfor %}
   </table>
+  <br>
+  <input type="submit" value="Add selected teams">
+</form>
 </div>
 {% endif %}
 
