@@ -462,15 +462,15 @@ def event_detail_team(request, event_id):
     good_teams = {}
     bad_teams = {}
     for teamname, competitors in prereg_teams.iteritems():
-      if len(competitors) == event.team_size:
-        team_exists = False
-        for team in event.teams.all():
-          if team.name == teamname:
-            team_exists = True
-        if not team_exists:
+      team_exists = False
+      for team in event.teams.all():
+        if team.name == teamname:
+          team_exists = True
+      if not team_exists:
+        if len(competitors) == event.team_size:
           good_teams[teamname] = competitors
-      else:
-        bad_teams[teamname] = competitors
+        else:
+          bad_teams[teamname] = competitors
     context = {'event' : event,
                'team_size' : range(1, event.team_size + 1),
                'teams' : event.teams.all(),
@@ -506,12 +506,11 @@ def event_add_teams(request, event_id):
     teams = get_preregistered_teams_for_event(event)
     for teamname in request.POST.getlist('add'):
       if teamname in teams:
-        if len(teams[teamname]) == event.team_size:
-          team = m.Team.objects.create(name=teamname)
-          for competitor in teams[teamname]:
-            team.members.add(competitor)
-          team.save()
-          event.teams.add(team)
+        team = m.Team.objects.create(name=teamname)
+        for competitor in teams[teamname]:
+          team.members.add(competitor)
+        team.save()
+        event.teams.add(team)
     event.save()
   return HttpResponseRedirect('../%s' % event_id)
 
