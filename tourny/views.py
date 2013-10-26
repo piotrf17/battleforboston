@@ -437,6 +437,9 @@ def event_bracket(request, event_id):
                                     years_training_sum,
                                     ''))  # School.
 
+  if len(competitors) < 2:
+    return HttpResponseRedirect('../../events')
+
   if event.event_type in ['U', 'V', 'O']:
     ordered_competitors = bracket.seed_bracket(competitors)
     bracket.generate_bracket(response, unicode(event),
