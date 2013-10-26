@@ -338,6 +338,16 @@ def event_open(request, event_id):
 
 
 @login_required
+def event_reset(request, event_id):
+  event = get_object_or_404(m.Event, pk=event_id)
+  if event.state == 'O':
+    event.competitors.clear()
+    event.state = 'C'
+    event.save()
+  return HttpResponseRedirect('../%s' % event_id)
+
+
+@login_required
 def event_add_competitors(request, event_id):
   """Add competitors to a given event."""
   event = get_object_or_404(m.Event, pk=event_id)
@@ -494,6 +504,18 @@ def event_open_team(request, event_id):
           team.members.add(competitor)
         team.save()
         event.teams.add(team)
+    event.save()
+  return HttpResponseRedirect('../%s' % event_id)
+
+
+@login_required
+def event_reset_team(request, event_id):
+  event = get_object_or_404(m.Event, pk=event_id)
+  if event.state == 'O':
+    event.state = 'C'
+    for team in event.teams.all():
+      m.Team.objects.get(pk=team.pk).delete()
+    event.teams.clear()
     event.save()
   return HttpResponseRedirect('../%s' % event_id)
 

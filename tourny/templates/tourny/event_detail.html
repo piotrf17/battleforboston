@@ -87,6 +87,14 @@
 {# ================================================================== #}
 {#                  Event has been opened.                            #}
 {# ================================================================== #}
+
+<p>The event is now open.  You can generate a bracket from the link on the
+  main events page, or just by clicking
+  <a href="{% url 'tourny:event_bracket' event.pk %}">here</a>.
+  If you've opened this event by accident, or you want to go back to the original
+  roster you can always reset the event by clicking
+  <a href="{% url 'tourny:event_reset' event.pk %}">here</a>.
+
 {% if event.state == 'O' %}
 <p>The following people are currently in this event:</p>
 <div class="centered">
