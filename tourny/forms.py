@@ -25,10 +25,18 @@ class PersonForm(ModelForm):
     # If we've signed up for team kumite, make sure we have a team name.
     if team_kumite and not team_kumite_team_name:
       raise ValidationError('Please enter a team kumite team name!')
+    if team_kumite_team_name and not team_kumite:
+      raise ValidationError('You entered a team kumite team name, ' +
+                            'but did not select that you want to participate ' +
+                            'in team kumite.  Please check the box below.')
 
     # If we've signed up for boston battle, we need a team name and partner.
     if boston_battle and not boston_battle_team_name:
       raise ValidationError('Please enter a Boston Battle team name!')
+    if boston_battle_team_name and not boston_battle:
+      raise ValidationError('You entered a Boston Battle team name, ' +
+                            'but did not select that you want to participate ' +
+                            'in Boston Battle.  Please check the box below.')
     if boston_battle and not boston_battle_partner_name: 
       raise ValidationError('Please enter your Boston Battle teammate\'s name!')
 

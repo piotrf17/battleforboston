@@ -134,8 +134,9 @@ def payment_receipt(request, payment_id):
   people = payment.person_set.all()
 
   # Generate a pdf response.
+  filename = 'receipt-%s.pdf' % payment_id
   response = HttpResponse(content_type="application/pdf")
-  response['Content-Disposition'] = 'attachment; filename="receipt.pdf"'
+  response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
   # TODO(piotrf): don't hardcode payment amount
   receipt.receipt(response, people, 25, payment.amount)
@@ -408,8 +409,9 @@ def event_bracket(request, event_id):
   event = get_object_or_404(m.Event, pk=event_id)
 
   # Generate a pdf response.
+  filename = 'bracket-%s.pdf' % event_id
   response = HttpResponse(content_type="application/pdf")
-  response['Content-Disposition'] = 'attachment; filename="bracket.pdf"'
+  response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
   # Gather competitors or teams
   Competitor = collections.namedtuple('Competitor', 'name rank experience school')
