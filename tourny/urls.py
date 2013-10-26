@@ -17,6 +17,8 @@ urlpatterns = patterns('',
   url(r'^payments$', views.payment_list, name='payment_list'),
   url(r'^payments/(?P<payment_id>\d+)$', views.payment_detail,
       name='payment_detail'),
+  url(r'^payments/(?P<payment_id>\d+)/receipt$', views.payment_receipt,
+      name='payment_receipt'),
   # Event management.
   url(r'^events$', views.event_list, name='event_list'),
   url(r'^events/add$', views.event_add, name='event_add'),

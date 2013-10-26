@@ -12,6 +12,6 @@
 {% endfor %}
 </ul>
 
-<p>TODO(piotrf): Print out a <a href="#">receipt</a>.</p>
+<p>Print out a <a href="{% url 'tourny:payment_receipt' payment.pk %}">receipt</a>.</p>
 
 {% endblock %}

@@ -11,7 +11,7 @@ from django.template.loader import get_template
 from django.template import Context
 
 from tourny import models as m
-from tourny import bracket, listing
+from tourny import bracket, listing, receipt
 from tourny.forms import PersonForm, PaymentForm, EventForm
 
 ###################################################################
@@ -125,6 +125,21 @@ def payment_detail(request, payment_id):
   context = {'payment': payment,
              'competitors': payment.person_set.all()}
   return render(request, 'tourny/payment_detail.html', context)
+
+
+@login_required
+def payment_receipt(request, payment_id):
+  payment = get_object_or_404(m.Payment, pk=payment_id)
+  people = payment.person_set.all()
+
+  # Generate a pdf response.
+  response = HttpResponse(content_type="application/pdf")
+  response['Content-Disposition'] = 'attachment; filename="receipt.pdf"'
+
+  # TODO(piotrf): don't hardcode payment amount
+  receipt.receipt(response, people, 25, payment.amount)
+
+  return response
 
 
 @login_required
