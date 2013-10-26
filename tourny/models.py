@@ -202,6 +202,10 @@ class Event(models.Model):
   state = models.CharField(max_length=1, choices=EVENT_STATES_CHOICES,
                            default='C')
 
+  # The ids of the event winners are encoded in this string, comma
+  # separated.  This is almost certainly not a good way to do this.
+  winners = models.CharField(max_length=100, blank=True, null=True)
+
   def __unicode__(self):
     if self.name == 'Default':
       name = self.get_event_type_display()

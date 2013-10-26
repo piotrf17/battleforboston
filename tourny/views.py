@@ -359,7 +359,7 @@ def event_detail(request, event_id):
                'event_competitors_prereg' : event_competitors_prereg,
                'other_competitors' : other_competitors}
     return render(request, 'tourny/event_detail.html', context)
-
+    
 
 @login_required
 def event_open(request, event_id):
@@ -376,9 +376,10 @@ def event_open(request, event_id):
 @login_required
 def event_reset(request, event_id):
   event = get_object_or_404(m.Event, pk=event_id)
-  if event.state == 'O':
+  if event.state in ['O', 'F']:
     event.competitors.clear()
     event.state = 'C'
+    event.winners = ''
     event.save()
   return HttpResponseRedirect('../%s' % event_id)
 
@@ -447,6 +448,37 @@ def event_bracket(request, event_id):
     return response
                                     
   return HttpResponseRedirect('../../events')
+
+
+@login_required
+def event_winners(request, event_id):
+  """A place to enter the winners of the event."""
+  event = get_object_or_404(m.Event, pk=event_id)
+  if event.event_type in ['A', 'U']:
+    competitors = event.competitors.all()
+  else:
+    competitors = event.teams.all()
+  if request.method == 'POST':
+    if len(competitors) == 1:
+      event.winners = request.POST['first']
+    elif len(competitors) == 2:
+      event.winners = '%s,%s' % (request.POST['first'],
+                                 request.POST['second'])
+    else:
+      event.winners = '%s,%s,%s' % (request.POST['first'],
+                                    request.POST['second'],
+                                    request.POST['third'])
+    event.state = 'F'
+    event.save()
+  if event.winners:
+    winners = [int(x) for x in event.winners.split(',')]
+    winners.extend([-1] * (3 - len(winners)))
+  else:
+    winners = [-1,-1,-1]
+  context = {'event' : event,
+             'winners' : winners,
+             'competitors' : competitors}
+  return render(request, 'tourny/event_winners.html', context)
 
 
 def get_preregistered_teams_for_event(event):
@@ -548,11 +580,12 @@ def event_open_team(request, event_id):
 @login_required
 def event_reset_team(request, event_id):
   event = get_object_or_404(m.Event, pk=event_id)
-  if event.state == 'O':
+  if event.state in ['O', 'F']:
     event.state = 'C'
     for team in event.teams.all():
       m.Team.objects.get(pk=team.pk).delete()
     event.teams.clear()
+    event.winners = ''
     event.save()
   return HttpResponseRedirect('../%s' % event_id)
 

@@ -31,14 +31,21 @@
     <td>{{ event.get_age_display }}</td>
     <td>{{ event.get_experience_display }}</td>
     <td>
+      {% if event.state != 'F' %}
       {% if event.team_event %}
       <a href="{% url 'tourny:event_detail_team' event.pk %}">Teams</a>
       {% else %}
       <a href="{% url 'tourny:event_detail' event.pk %}">Competitors</a>
       {% endif %}
+      {% endif %}
     </td>
     {% if event.state == 'O' %}
     <td><a href="{% url 'tourny:event_bracket' event.pk %}">Bracket</a></td>
+    <td><a href="{% url 'tourny:event_winners' event.pk %}">Winners</a></td>
+    {% endif %}
+    {% if event.state == 'F' %}
+    <td></td>
+    <td><a href="{% url 'tourny:event_winners' event.pk %}">Winners</a></td>
     {% endif %}
   </tr>
   {% endfor %}
