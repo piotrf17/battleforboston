@@ -38,6 +38,8 @@ def register(request):
   This view is publicy accessible, and linked from the 
   root url: battleforboston.com/register
   """
+  return render(request, 'tourny/registration_closed.html', {})
+
   if request.method == 'POST':
     form = PersonForm(request.POST)
     if form.is_valid():
